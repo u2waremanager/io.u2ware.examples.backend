@@ -63,7 +63,7 @@
 
 		<dependency>
 			<groupId>io.u2ware</groupId>
-			<artifactId>u2ware-common-data</artifactId>
+			<artifactId>common-data</artifactId>
 			<version>${u2ware.version}</version>
 		</dependency>
 
@@ -79,7 +79,7 @@
 
 		<dependency>
 			<groupId>io.u2ware</groupId>
-			<artifactId>u2ware-common-oauth2</artifactId>
+			<artifactId>common-oauth2</artifactId>
 			<version>${u2ware.version}</version>
 		</dependency>
 
@@ -110,7 +110,7 @@
 
 		<dependency>
 			<groupId>io.u2ware</groupId>
-			<artifactId>u2ware-common-docs</artifactId>
+			<artifactId>common-docs</artifactId>
 			<version>${u2ware.version}</version>
 			<scope>test</scope>
 		</dependency>
