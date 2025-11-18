@@ -81,7 +81,12 @@ public class ApplicationWebConfig implements WebMvcConfigurer {
                                 //////////////////////////////
                                 // Vue has all uri
                                 //////////////////////////////
-                                return new ClassPathResource("/META-INF/resources/index.html");
+                                ClassPathResource c = new ClassPathResource("/META-INF/resources/index.html");
+                                if(c.exists() && c.isReadable()){
+                                    return c;
+                                } else{
+                                    return null;
+                                }
                             }
                         }
                     });
