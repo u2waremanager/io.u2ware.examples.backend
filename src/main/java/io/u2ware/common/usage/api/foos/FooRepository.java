@@ -10,13 +10,13 @@ import io.u2ware.common.usage.domain.Foo;
 
 
 public interface FooRepository extends
-    CrudRepository<Foo, Integer>,
-    PagingAndSortingRepository<Foo, Integer>,
+    CrudRepository<Foo, String>,
+    PagingAndSortingRepository<Foo, String>,
     JpaSpecificationExecutor<Foo> {
 
-         
+    public List<Foo> findByName(String name);    
+        
     public List<Foo> findByAge(Integer age);
 
-    public List<Foo> findByName(String name);    
 
 }

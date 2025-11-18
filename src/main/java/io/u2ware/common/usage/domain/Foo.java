@@ -1,26 +1,19 @@
 package io.u2ware.common.usage.domain;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
+@NoArgsConstructor @AllArgsConstructor
 public class Foo {
 
-    public Foo() {
-
-    }
-    public Foo(String name, Integer age) {
-        this.name = name;
-        this.age = age;
-    }
-
     @Id
-    @GeneratedValue
-    private Integer id;
-
+    private String id;
 
     private String name;
     private Integer age;

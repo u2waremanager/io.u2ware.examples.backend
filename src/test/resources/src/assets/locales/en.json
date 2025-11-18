@@ -1,0 +1,45 @@
+
+{
+
+    "locale" : "EN",
+
+    "index" : {
+        "bar" : {
+            "title" : "REST",
+            "start" : "Start"
+        },
+
+        "navigation" : {
+            "home" : "Monitoring",
+            "messages" : "Messaging"
+        }
+    },
+
+    "accounts" : {
+        "logout" : {
+            "title" : "Logout"
+        }
+    },
+
+
+
+    "$dialog" : {
+        "confirm" : {
+            "title" : "Confirm"
+            ,
+            "message" : "you wanna {0} ?"
+            ,
+            "yes" : "OK"
+            ,
+            "no" : "Cancel"
+        }
+        ,
+        "alert" : {
+            "title" : "Alert"
+            ,
+            "message" : "{0}"
+            ,
+            "yes" : "OK"
+        }
+    }
+}

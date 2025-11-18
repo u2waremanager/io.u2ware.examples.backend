@@ -12,11 +12,12 @@ import io.u2ware.common.docs.RestDocumentationResultHandlerBuilder;
 @Component
 public class FooDocs extends MockMvcRestDocs {
 
-    public Map<String,Object> newEntity(){
+    public Map<String,Object> newEntity(String id){
 
         Map<String,Object> r = new HashMap<>();
-        r.put("name", "hello");
-        r.put("age", 111);
+        r.put("id", id);
+        r.put("name", super.randomText("Foo-"));
+        r.put("age", super.randomInt());
         return r;
     }
 

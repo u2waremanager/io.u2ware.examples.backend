@@ -59,10 +59,10 @@ public class U2wareCommonDataTests {
 //		System.err.println(optionalValue.get().getClass());
 
 
-        fooRepository.save(new Foo("a",1));
-        fooRepository.save(new Foo("b",2));
-        fooRepository.save(new Foo("c",3));
-        fooRepository.save(new Foo("d",4));
+        fooRepository.save(new Foo("a", "a",1));
+        fooRepository.save(new Foo("a", "b",2));
+        fooRepository.save(new Foo("a", "c",3));
+        fooRepository.save(new Foo("a", "d",4));
 
 
         Foo f = new Foo();

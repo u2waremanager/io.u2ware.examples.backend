@@ -8,8 +8,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.test.web.servlet.MockMvc;
 
+import io.u2ware.common.usage.api.foos.FooDocs;
+import io.u2ware.common.usage.api.oauth2.Oauth2Docs;
 import io.u2ware.common.usage.domain.Bar;
 
 @SpringBootTest
@@ -19,14 +22,10 @@ public class BarTests {
 
 	protected Log logger = LogFactory.getLog(getClass());
 
+	protected @Autowired MockMvc mvc;
 
-
-	@Autowired
-	protected BarDocs bd;
-
-
-	@Autowired
-	protected MockMvc mvc;
+	protected @Autowired Oauth2Docs od;	
+	protected @Autowired BarDocs bd;
 
 
 
@@ -37,27 +36,41 @@ public class BarTests {
 	void contextLoads1() throws Exception{
 
 
-		barRepository.save(new Bar("1",3));
-		barRepository.save(new Bar("2",4));
+        Jwt u = od.jose("u");
 
 
 		mvc.perform(get("/api/profile/bars")).andExpect(is2xx()).andDo(print());
 
 
+		//////////////////////////////////////////////
+		// CrudRepository
+		//////////////////////////////////////////////
+		mvc.perform(get("/api/bars")).andExpect(is4xx());         // unauthorized
+		mvc.perform(get("/api/bars").auth(u)).andExpect(is4xx()); // not supported
+
+		mvc.perform(get("/api/bars/search")).andExpect(is4xx());          // unauthorized
+		mvc.perform(get("/api/bars/search").auth(u)).andExpect(is4xx());  // not supported
+
+
+		mvc.perform(post("/api/bars").content(bd::newEntity)).andExpect(is4xx());
+		mvc.perform(post("/api/bars").auth(u).content(bd::newEntity)).andExpect(is2xx())
+			.andDo(result(bd::context, "b1"));
+
+		String uri = bd.context("b1", "$._links.self.href");
+		mvc.perform(get(uri)).andExpect(is4xx());             // unauthorized
+		mvc.perform(get(uri).auth(u)).andExpect(is4xx());     // not supported
+
+
 
 		//////////////////////////////////////////////
-		//
+		// RestfulJpaRepository
 		//////////////////////////////////////////////
-		mvc.perform(get("/api/bars")).andExpect(is4xx());
-		mvc.perform(get("/api/bars/1")).andExpect(is4xx());
-		mvc.perform(get("/api/bars/search")).andExpect(is4xx());
-		mvc.perform(get("/api/bars/search/findByAge").param("age", "1")).andExpect(is4xx());
+		mvc.perform(post("/api/bars/search")).andExpect(is4xx());         // unauthorized
+		mvc.perform(post("/api/bars/search").auth(u)).andExpect(is2xx()); // ok
 
-		//////////////////////////////////////////////
-		//
-		//////////////////////////////////////////////
-		mvc.perform(post("/api/bars/1")).andExpect(is2xx());
-		mvc.perform(post("/api/bars/search")).andExpect(is2xx());
+		mvc.perform(post(uri)).andExpect(is4xx());             // unauthorized
+		mvc.perform(post(uri).auth(u)).andExpect(is2xx());     // ok
+
 
 
 

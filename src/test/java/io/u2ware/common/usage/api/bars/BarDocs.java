@@ -11,10 +11,10 @@ import java.util.Map;
 public class BarDocs extends MockMvcRestDocs {
 
     public Map<String,Object> newEntity(){
+
         Map<String,Object> r = new HashMap<>();
-        r.put("id", "hello"+System.currentTimeMillis());
-        r.put("name", "hello");
-        r.put("age", 111);
+        r.put("name", super.randomText("Bar-"));
+        r.put("age", super.randomInt());
         return r;
     }
 

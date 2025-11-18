@@ -1,8 +1,5 @@
 package io.u2ware.common.usage.api.foos;
 
-import static io.u2ware.common.docs.MockMvcRestDocs.is2xx;
-import static io.u2ware.common.docs.MockMvcRestDocs.print;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.jupiter.api.Test;
@@ -10,9 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static io.u2ware.common.docs.MockMvcRestDocs.*;
+
+import io.u2ware.common.usage.api.oauth2.Oauth2Docs;
 import io.u2ware.common.usage.domain.Foo;
 
 
@@ -25,47 +25,53 @@ public class FooTests {
 	protected Log logger = LogFactory.getLog(getClass());
 
 
+	protected @Autowired MockMvc mvc;
 
-	@Autowired
-	protected FooDocs fd;
-
-
-	@Autowired
-	protected MockMvc mvc;
-
-
-	@Autowired
-	protected FooRepository fooRepository;
+	protected @Autowired Oauth2Docs od;	
+	protected @Autowired FooDocs fd;
 
 
 	@SuppressWarnings("null")
 	@Test
 	void contextLoads1() throws Exception{
+		
+        Jwt u = od.jose("u");
 
-		fooRepository.save(new Foo("a",1));
-		fooRepository.save(new Foo("b",2));
+		mvc.perform(get("/api/profile/foos")).andExpect(is2xx()).andDo(print());
 
+		//////////////////////////////////////////////
+		// CrudRepository
+		//////////////////////////////////////////////
+		mvc.perform(get("/api/foos")).andExpect(is4xx());             // unauthorized
+		mvc.perform(get("/api/foos").auth(u)).andExpect(is2xx());     // ok
 
-		// mvc.perform(GET("/api/profile/foos")).andExpect(is2xx()).andDo(print());
-
-		// //////////////////////////////////////////////
-		// //
-		// //////////////////////////////////////////////
-		// mvc.perform(GET("/api/foos")).andExpect(is2xx());
-		// mvc.perform(GET("/api/foos/1")).andExpect(is2xx());
-		// mvc.perform(GET("/api/foos/search")).andExpect(is2xx());
-		// mvc.perform(GET("/api/foos/search/findByAge").param("age", "1")).andExpect(is2xx());
-
-
-		// //////////////////////////////////////////////
-		// //
-		// //////////////////////////////////////////////
-		// mvc.perform(POST("/api/foos/1")).andExpect(is4xx());
-		// mvc.perform(POST("/api/foos/search")).andExpect(is4xx());
+		mvc.perform(get("/api/foos/search")).andExpect(is4xx());          // unauthorized
+		mvc.perform(get("/api/foos/search").auth(u)).andExpect(is2xx());  // ok
 
 
+		mvc.perform(post("/api/foos").content(fd::newEntity, "a")).andExpect(is4xx());
+		mvc.perform(post("/api/foos").auth(u).content(fd::newEntity, "a")).andExpect(is2xx())
+			.andDo(result(fd::context, "f1"));
 
-		mvc.perform(put("/api/foos/1")).andExpect(is2xx()).andDo(print());
+
+		String uri = fd.context("f1", "$._links.self.href");
+		mvc.perform(get(uri)).andExpect(is4xx());             // unauthorized
+		mvc.perform(get(uri).auth(u)).andExpect(is2xx());     // ok
+
+
+
+		//////////////////////////////////////////////
+		// RestfulJpaRepository
+		//////////////////////////////////////////////
+		mvc.perform(post("/api/foos/search")).andExpect(is4xx());          // unauthorized
+		mvc.perform(post("/api/foos/search").auth(u)).andExpect(is4xx());  // not supported
+
+		mvc.perform(post(uri)).andExpect(is4xx());             // unauthorized
+		mvc.perform(post(uri).auth(u)).andExpect(is4xx());     // not supported
+
+
+
+
 	}
 
 

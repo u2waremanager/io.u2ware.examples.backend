@@ -8,14 +8,13 @@ import io.u2ware.common.data.jpa.repository.RestfulJpaRepository;
 import io.u2ware.common.usage.domain.Bar;
 
 
-public interface BarRepository extends RestfulJpaRepository<Bar, String> {
-
-
-    @RestResource(exported=false) 
-    public List<Bar> findByAge(Integer age);    
+public interface BarRepository extends RestfulJpaRepository<Bar, Long> {
 
 
     @RestResource(exported=false) 
     public List<Bar> findByName(String name);    
+
+    @RestResource(exported=false) 
+    public List<Bar> findByAge(Integer age);    
 
 }
