@@ -18,7 +18,7 @@
 
 <script>
 const x = "[/accounts/logout]";
-import $accounts from "@/assets/apis/com.ubisam.examples.rest.oauth2.js";
+import $accountsApi from "@/assets/apis/accounts";
 
 export default {
 
@@ -32,7 +32,7 @@ export default {
             this.$dialog.confirm(before, {})
                 .then((r) => {
                     console.log(x, "logout()", 1, r);
-                    return $accounts.oauth2.logout();
+                    return $accountsApi.oauth2.logout();
                 })
                 .then((r) => {
                     console.log(x, "logout()", 2, r);
@@ -51,7 +51,7 @@ export default {
         Promise.resolve()
             .then((r) => {
                 console.log(x, "mounted()", 1);
-                return $accounts.oauth2.userinfo();
+                return $accountsApi.oauth2.userinfo();
             })
             .then((r) => {
                 console.log(x, "mounted()", 2);

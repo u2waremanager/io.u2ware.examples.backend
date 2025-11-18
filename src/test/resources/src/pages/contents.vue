@@ -45,7 +45,7 @@
 
 <script>
 const x = "[/contents]";
-import $accounts from "@/assets/apis/com.ubisam.examples.rest.oauth2.js";
+import $accounts from "@/assets/apis/accounts";
 import $contentsState from "@/assets/stores/contents.js";
 
 

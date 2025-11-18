@@ -130,8 +130,8 @@
 
 <script>
 const x = "[/contents/bars]";
-import $contents from "@/assets/apis/com.ubisam.examples.rest.backend.js";
-import $contentsState from "@/assets/stores/contents.js";
+import $contentsApi from "@/assets/apis/contents.js";
+import $contentsStore from "@/assets/stores/contents.js";
 
 export default {
   data() {
@@ -178,19 +178,19 @@ export default {
           self.validate = r;
         },
         search: (r) => {
-          return $contents.bars.search(self.searchEntity, r);
+          return $contentsApi.bars.search(self.searchEntity, r);
         },
         create: () => {
-          return $contents.bars.create(self.editEntity);
+          return $contentsApi.bars.create(self.editEntity);
         },
         read: (r) => {
-          return $contents.bars.read(r);
+          return $contentsApi.bars.read(r);
         },
         update: () => {
-          return $contents.bars.update(self.editEntity);
+          return $contentsApi.bars.update(self.editEntity);
         },
         delete: () => {
-          return $contents.bars.delete(self.editEntity);
+          return $contentsApi.bars.delete(self.editEntity);
         },
         entities: (r) => {
           self.config.entitiesTotal = r.page.totalElements;
@@ -207,7 +207,7 @@ export default {
   },
 
   computed: {
-    subtitle: $contentsState.computed.subtitle,
+    subtitle: $contentsStore.computed.subtitle,
   },
 
   watch: {

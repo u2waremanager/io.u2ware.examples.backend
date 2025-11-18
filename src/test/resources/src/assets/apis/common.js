@@ -1,8 +1,7 @@
 import qs from "qs";
 import $axios from "axios";
 
-const name = "[com.ubisam.examples.rest..js]"
-// console.log(name);
+const name = "[/assets/apis/common.js]";
 
 const $common = {
 

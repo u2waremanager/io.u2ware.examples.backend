@@ -1,14 +1,11 @@
-import $common from "@/assets/apis/com.ubisam.examples.rest..js";
+import $common from "@/assets/apis/common.js";
 
-import $accountsState from "@/assets/stores/accounts.js";
+import $accountsStore from "@/assets/stores/accounts.js";
 
 
-const name = "[com.ubisam.examples.rest.oauth2.js]"
-// console.log(name);
-// console.log($common);
-// console.log($accountsState);
+const name = "[/assets/apis/accounts.js]";
 
-const $accounts = {
+const $accountsApi = {
 
   api: {
 
@@ -17,7 +14,7 @@ const $accounts = {
     },
 
     execute(optionsBuilder) {
-      return $accounts.api.host()
+      return $accountsApi.api.host()
         .then(optionsBuilder)
         .then((e) => {
           return $common.axios.execute(e);
@@ -31,15 +28,15 @@ const $accounts = {
     },
 
     headers(headers, token){
-      let oauth2 = (token == undefined) ? $accountsState.computed.oauth2.get() : token;
+      let oauth2 = (token == undefined) ? $accountsStore.computed.oauth2.get() : token;
       return $common.api.auth(oauth2, headers, "headers");
     },
     params(params, token){
-      let oauth2 = (token == undefined) ? $accountsState.computed.oauth2.get() : token;
+      let oauth2 = (token == undefined) ? $accountsStore.computed.oauth2.get() : token;
       return $common.api.auth(oauth2, params, "params");
     },
     query(params, token){
-      let oauth2 = (token == undefined) ? $accountsState.computed.oauth2.get() : token;
+      let oauth2 = (token == undefined) ? $accountsStore.computed.oauth2.get() : token;
       return $common.api.auth(oauth2, params, "query");
     },
 
@@ -58,40 +55,40 @@ const $accounts = {
   ////////////////////////////////////  
   oauth2: {
     providers() {
-      return $accounts.api.execute((uri) => ({
+      return $accountsApi.api.execute((uri) => ({
         url: `${uri}/oauth2/providers`,
       }));
     },
 
     userinfo() {
-      return $accounts.api.execute((uri) => ({
+      return $accountsApi.api.execute((uri) => ({
         url: `${uri}/oauth2/userinfo`,
-        headers: $accounts.api.headers(),
+        headers: $accountsApi.api.headers(),
       }));
     },
 
     login(query){
-      return $accounts.api.execute((uri) => ({
+      return $accountsApi.api.execute((uri) => ({
         url: `${uri}/oauth2/userinfo`,
         headers: $common.api.auth(query, undefined, "headers"),
       }))
       .then(r=>{
-        $accountsState.computed.oauth2.set(query);
-        return $accountsState.computed.oauth2.get();
+        $accountsStore.computed.oauth2.set(query);
+        return $accountsStore.computed.oauth2.get();
       });
     },
 
     logout() {
-      return $accounts.api.execute((uri) => ({
+      return $accountsApi.api.execute((uri) => ({
         url: `${uri}/oauth2/logout`,
-        headers: $accounts.api.headers(),
+        headers: $accountsApi.api.headers(),
       }))
       .finally((r) => {
-        $accountsState.computed.oauth2.set(undefined);
+        $accountsStore.computed.oauth2.set(undefined);
       });
     },
   },
 
     
 }
-export default $accounts;
+export default $accountsApi;

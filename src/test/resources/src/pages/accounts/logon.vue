@@ -9,7 +9,7 @@
 
 <script>
 const x = "[/accounts/logon]";
-import $accounts from "@/assets/apis/com.ubisam.examples.rest.oauth2.js";
+import $accountsApi from "@/assets/apis/accounts";
 
 export default {
 
@@ -25,7 +25,7 @@ export default {
         Promise.resolve()
             .then((r) => {
                 console.log(x, "mounted()", 1);
-                return $accounts.oauth2.userinfo();
+                return $accountsApi.oauth2.userinfo();
             })
             .then((r) => {
                 console.log(x, "mounted()", 2);
@@ -34,7 +34,7 @@ export default {
             .catch((r) => {
                 // OK. action !!
                 console.log(x, "mounted()", 3, this.$route.query);
-                return $accounts.oauth2.login(this.$route.query);
+                return $accountsApi.oauth2.login(this.$route.query);
             })
             .then((r) => {
                 console.log(x, "mounted()", 4, r);

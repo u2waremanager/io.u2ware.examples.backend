@@ -19,8 +19,6 @@ import org.springframework.data.jpa.domain.Specification;
 import io.u2ware.common.data.jpa.repository.query.JpaSpecificationBuilder;
 import io.u2ware.common.data.jpa.repository.query.MutableSpecification;
 import io.u2ware.common.data.jpa.repository.query.PartTreeSpecification;
-import io.u2ware.common.data.jpa.webmvc.RestfulJpaRepositoryController;
-import io.u2ware.common.data.jpa.webmvc.RestfulJpaRepositoryEventHandlerInvoker;
 import io.u2ware.common.usage.api.bars.BarRepository;
 import io.u2ware.common.usage.api.foos.FooRepository;
 import io.u2ware.common.usage.domain.Foo;

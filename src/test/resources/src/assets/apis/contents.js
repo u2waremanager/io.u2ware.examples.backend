@@ -1,10 +1,8 @@
-import $common from "@/assets/apis/com.ubisam.examples.rest..js";
+import $common from "@/assets/apis/common.js";
 
 import $accountsState from "@/assets/stores/accounts.js";
 
-const name = "[com.ubisam.examples.rest.backend.js]";
-// console.log(name);
-// console.log($common);
+const name = "[/assets/apis/contents.js]";
 
 const $contents = {
   api: {

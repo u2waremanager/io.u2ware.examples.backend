@@ -34,7 +34,7 @@
 
 <script>
 const x = "[/accounts/login]";
-import $accounts from "@/assets/apis/com.ubisam.examples.rest.oauth2.js";
+import $accountsApi from "@/assets/apis/accounts";
 
 export default {
   data: () => ({
@@ -79,7 +79,7 @@ export default {
     Promise.resolve()
       .then((r) => {
         console.log(x, "mounted()", 1);
-        return $accounts.oauth2.userinfo();
+        return $accountsApi.oauth2.userinfo();
       })
       .then((r) => {
         console.log(x, "mounted()", 2);
@@ -87,7 +87,7 @@ export default {
       })
       .catch((r) => {
         console.log(x, "mounted()", 3);
-        return $accounts.oauth2.providers();
+        return $accountsApi.oauth2.providers();
       })
       .then((r) => {
         console.log(x, "mounted()", 4);

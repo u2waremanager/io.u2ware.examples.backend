@@ -6,7 +6,7 @@
 
 <script>
 const x = "[/contents/index]";
-import $accounts from "@/assets/apis/com.ubisam.examples.rest.oauth2.js";
+import $accounts from "@/assets/apis/accounts";
 
 export default {
     data: () => ({

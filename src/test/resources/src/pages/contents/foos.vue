@@ -80,7 +80,7 @@
 
               
               <v-text-field
-                
+                class="ma-2"
                 v-model="editEntity.id"
                 :rules="[$rules.requried]"
                 label="id"
@@ -91,6 +91,7 @@
               ></v-text-field>
 
               <v-text-field
+                class="ma-2"
                 v-model="editEntity.name"
                 :rules="[$rules.requried]"
                 label="Name"
@@ -100,7 +101,9 @@
               ></v-text-field>
 
               <v-text-field
+                class="ma-2"
                 v-model="editEntity.age"
+                :rules="[$rules.number]"
                 label="Age"
                 placeholder="age"
                 hint="......."
@@ -137,8 +140,8 @@
 
 <script>
 const x = "[/contents/foos]";
-import $contents from "@/assets/apis/com.ubisam.examples.rest.backend.js";
-import $contentsState from "@/assets/stores/contents.js";
+import $contentsApi from "@/assets/apis/contents.js";
+import $contentsStore from "@/assets/stores/contents.js";
 
 export default {
   data() {
@@ -175,8 +178,9 @@ export default {
         entitiesTotal: 0,
         entity: {},
         initEntity: {
-          name: "",
-          age: 0,
+          id: undefined,
+          name: undefined,
+          age: undefined,
         },
       },
 
@@ -185,19 +189,19 @@ export default {
           self.validate = r;
         },
         search: (r) => {
-          return $contents.foos.search(self.searchEntity, r);
+          return $contentsApi.foos.search(self.searchEntity, r);
         },
         create: () => {
-          return $contents.foos.create(self.editEntity);
+          return $contentsApi.foos.create(self.editEntity);
         },
         read: (r) => {
-          return $contents.foos.read(r);
+          return $contentsApi.foos.read(r);
         },
         update: () => {
-          return $contents.foos.update(self.editEntity);
+          return $contentsApi.foos.update(self.editEntity);
         },
         delete: () => {
-          return $contents.foos.delete(self.editEntity);
+          return $contentsApi.foos.delete(self.editEntity);
         },
         entities: (r) => {
           self.config.entitiesTotal = r.page.totalElements;
@@ -214,7 +218,7 @@ export default {
   },
 
   computed: {
-    subtitle: $contentsState.computed.subtitle,
+    subtitle: $contentsStore.computed.subtitle,
   },
 
   watch: {
