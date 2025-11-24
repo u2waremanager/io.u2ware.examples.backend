@@ -1,30 +1,83 @@
+# What you needs
+
+| Keyword | Description |
+| --- | --- | 
+| [REPOSITORY] | REPOSITORY |
+| [REPOSITORY_DIR] | REPOSITORY |
+
+
+
 # Runtime Envirement 
 
-> git clone 
+#### 1. 
 
-> docker-compose up
+> git clone [REPOSITORY]
 
+```bash
+git clone https://github.com/u2waremanager/io.u2ware.common.usage.git
+```
+
+#### 2. 
+> cd [REPOSITORY_DIR]
+
+```bash
+cd io.u2ware.common.usage
+```
+
+#### 3. 
+
+```bash
+docker-compose up -d
+```
+
+#### 4.
 > http://localhost:8080
-
 
 
 # Development Envirement 
 
+## Develop 
 
-## Develop Backend
-> ./mvnw spring-boot:run
+### 1. Backend
 
-## Develop Frontend
+#### 1-1. 
 
-> cd ....
+>  cd [REPOSITORY_DIR]
 
-> npm install
+```bash
+cd io.u2ware.common.usage
+```
 
-> npm run dev
+#### 1-2. 
+```bash
+./mvnw spring-boot:run
+```
 
 
-## Package Frontend
-> cd {source}/src/test/resources/META-INF/frontend
+### 2. Frontend
+
+
+#### 2-1. 
+> cd [REPOSITORY_DIR]/src/test/resources/frontend
+
+```bash
+cd io.u2ware.common.usage/src/test/resources/frontend
+```
+
+#### 2-2. 
+```bash
+npm install
+```
+
+#### 2-3. 
+```bash
+npm run dev
+```
+
+## Package 
+
+### 1. Backend
+> cd src/test/resources/frontend
 
 > npm run build
 
