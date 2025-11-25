@@ -7,7 +7,7 @@
 
         <v-text-field
           class="ms-10"
-          v-model="searchEntity.keyword"
+          v-model="searchForm.keyword"
           density="compact"
           label="Search"
           prepend-inner-icon="mdi-magnify"
@@ -31,8 +31,8 @@
         :items-per-page-options="config.itemsPerPageOptions"
         :headers="config.headers"
         :item-value="config.itemValue"
-        :items-length="config.entitiesTotal"
-        :items="config.entities"
+        :items-length="entitiesTotal"
+        :items="entities"
         @update:options="searchAction"
       >
         <template v-slot:item.id="{ item }">
@@ -73,15 +73,15 @@
         <v-card
           prepend-icon="mdi-update"
           :title="$t('contents.foos.title')"
-          :subtitle="editEntity.name"
+          :subtitle="editForm.name"
         >
           <v-card-text>
-            <v-form validate-on="eager" @update:model-value="api.validate">
+            <v-form validate-on="eager" @update:model-value="entityValidate">
 
               
               <v-text-field
                 class="ma-2"
-                v-model="editEntity.id"
+                v-model="editForm.id"
                 :rules="[$rules.requried]"
                 label="id"
                 placeholder="id"
@@ -92,7 +92,7 @@
 
               <v-text-field
                 class="ma-2"
-                v-model="editEntity.name"
+                v-model="editForm.name"
                 :rules="[$rules.requried]"
                 label="Name"
                 placeholder="name"
@@ -102,7 +102,7 @@
 
               <v-text-field
                 class="ma-2"
-                v-model="editEntity.age"
+                v-model="editForm.age"
                 :rules="[$rules.number]"
                 label="Age"
                 placeholder="age"
@@ -144,19 +144,23 @@ import $contentsApi from "@/assets/apis/contents.js";
 import $contentsStore from "@/assets/stores/contents.js";
 
 export default {
-  data() {
-    const self = this;
 
-    return {
+  data: () => ({
+
       loading: false,
       dialog: false,
       isNew: false,
       validate: false,
 
-      editEntity: {},
-      searchEntity: {},
+      searchForm: {},
+      editForm: {},
+
+      entities: [],
+      entitiesTotal: 0,
 
       config: {
+
+        api : $contentsApi.foos,
 
         search: "",
         itemsPerPageOptions: [
@@ -174,55 +178,21 @@ export default {
         sortBy: [{ key: "id", order: "desc" }],
         itemValue: "id",
 
-        entities: [],
-        entitiesTotal: 0,
-        entity: {},
-        initEntity: {
+
+        initForm: {
           id: undefined,
           name: undefined,
           age: undefined,
         },
       },
-
-      api: {
-        validate: (r) => {
-          self.validate = r;
-        },
-        search: (r) => {
-          return $contentsApi.foos.search(self.searchEntity, r);
-        },
-        create: () => {
-          return $contentsApi.foos.create(self.editEntity);
-        },
-        read: (r) => {
-          return $contentsApi.foos.read(r);
-        },
-        update: () => {
-          return $contentsApi.foos.update(self.editEntity);
-        },
-        delete: () => {
-          return $contentsApi.foos.delete(self.editEntity);
-        },
-        entities: (r) => {
-          self.config.entitiesTotal = r.page.totalElements;
-          self.config.entities = r._embedded.foos;
-          return r;
-        },
-        entity: (r) => {
-          self.editEntity = r ? r : Object.assign({}, self.config.initEntity);
-          self.config.entity = r ? r : {};
-          return r;
-        },
-      },
-    };
-  },
+  }),
 
   computed: {
     subtitle: $contentsStore.computed.subtitle,
   },
 
   watch: {
-    searchEntity: {
+    searchForm: {
       handler(e) {
         this.refreshAction();
       },
@@ -231,6 +201,12 @@ export default {
   },
 
   methods: {
+
+
+
+
+
+
     ////////////////////////////////////////
     //
     ////////////////////////////////////////
@@ -258,6 +234,15 @@ export default {
       return this.$dialog.alert(msg, code);
     },
 
+    entityValidate(r) {
+      this.validate = r;
+    },
+
+    entityReset(r) {
+      this.editForm = r ? r : Object.assign({}, this.config.initForm);
+      return r;
+    },
+
     actionStart(loading) {
       this.loading = true == loading ? true : false;
       return Promise.resolve();
@@ -270,7 +255,7 @@ export default {
         this.refreshAction();
       }
     },
-
+    
     ////////////////////////////////////////
     //
     ////////////////////////////////////////
@@ -281,10 +266,12 @@ export default {
     searchAction(data) {
       this.actionStart(true)
         .then((r) => {
-          return this.api.search(data);
+          return this.config.api.search(this.searchForm, r);
         })
         .then((r) => {
-          return this.api.entities(r);
+          this.entitiesTotal = r.entitiesTotal;
+          this.entities = r.entities;
+          return r;
         })
         .then((r) => {
           return this.actionEnd(false);
@@ -300,7 +287,7 @@ export default {
     newAction() {
       this.actionStart(true)
         .then((r) => {
-          return this.api.entity();
+          return this.entityReset();
         })
         .then((r) => {
           return this.dialogOpen(true);
@@ -316,7 +303,7 @@ export default {
           return this.dialogClose();
         })
         .then((r) => {
-          return this.api.entity();
+          return this.entityReset();
         })
         .then((r) => {
           return this.actionEnd(false);
@@ -329,13 +316,13 @@ export default {
           return this.actionStart(true);
         })
         .then((r) => {
-          return this.api.create();
+          return this.config.api.create(this.editForm);
         })
         .then((r) => {
           return this.confirmAfter("create");
         })
         .then((r) => {
-          return this.api.entity();
+          return this.entityReset();
         })
         .then((r) => {
           return this.actionEnd(true);
@@ -351,10 +338,10 @@ export default {
     readAction(data) {
       this.actionStart(true)
         .then((r) => {
-          return this.api.read(data);
+          return this.config.api.read(data);
         })
         .then((r) => {
-          return this.api.entity(r);
+          return this.entityReset(r);
         })
         .then((e) => {
           return this.dialogOpen(false);
@@ -376,13 +363,13 @@ export default {
           return this.actionStart(true);
         })
         .then((r) => {
-          return this.api.update();
+          return this.config.api.update(this.editForm);
         })
         .then((r) => {
           return this.confirmAfter("update");
         })
         .then((r) => {
-          return this.api.entity();
+          return this.entityReset();
         })
         .then((r) => {
           return this.actionEnd(true);
@@ -401,13 +388,13 @@ export default {
           return this.actionStart(true);
         })
         .then((r) => {
-          return this.api.delete();
+          return this.config.api.delete(this.editForm);
         })
         .then((r) => {
           return this.confirmAfter("delete");
         })
         .then((r) => {
-          return this.api.entity();
+          return this.entityReset();
         })
         .then((r) => {
           return this.actionEnd(true);

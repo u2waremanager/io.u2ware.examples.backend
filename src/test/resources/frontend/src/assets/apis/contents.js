@@ -60,7 +60,12 @@ const $contents = {
         method: "GET",
         data: data,
         params: $common.api.pageable(params),
-      }));
+      }))
+      .then((r)=>{
+        r.entitiesTotal = r.page.totalElements;
+        r.entities = r._embedded.foos;
+        return r;
+      });
     },
 		create(data){
 			return $contents.api.execute((uri)=> ({
@@ -102,7 +107,12 @@ const $contents = {
         method: "POST",
         data: data,
         params: $common.api.pageable(params),
-      }));
+      }))
+      .then((r)=>{
+        r.entitiesTotal = r.page.totalElements;
+        r.entities = r._embedded.bars;
+        return r;
+      });
     },
 		create(data){
 			return $contents.api.execute((uri)=> ({
@@ -145,7 +155,12 @@ const $contents = {
         method: "POST",
         data: data,
         params: $common.api.pageable(params),
-      }));
+      }))
+      .then((r)=>{
+        r.entitiesTotal = r.page.totalElements;
+        r.entities = r._embedded.users;
+        return r;
+      });
     },
 		create(data){
 			return $contents.api.execute((uri)=> ({

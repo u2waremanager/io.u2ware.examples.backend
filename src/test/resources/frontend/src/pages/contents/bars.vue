@@ -193,8 +193,8 @@ export default {
           return $contentsApi.bars.delete(self.editEntity);
         },
         entities: (r) => {
-          self.config.entitiesTotal = r.page.totalElements;
-          self.config.entities = r._embedded.bars;
+          self.config.entitiesTotal = r.entitiesTotal;
+          self.config.entities = r.entities;
           return r;
         },
         entity: (r) => {
