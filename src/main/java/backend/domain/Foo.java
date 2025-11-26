@@ -18,5 +18,7 @@ public class Foo {
     private String id;
 
     private String name;
+
     private Integer age;
+
 }

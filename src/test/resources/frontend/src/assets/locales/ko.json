@@ -48,6 +48,9 @@
         "bars" : {
             "title" : "Bars"
         },
+        "items" : {
+            "title" : "Items"
+        },
         "users" : {
             "title" : "Users"
         }

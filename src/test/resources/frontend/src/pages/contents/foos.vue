@@ -4,7 +4,11 @@
       <v-card-title class="d-flex align-center pe-2">
         <v-icon icon="mdi-video-input-component"></v-icon> &nbsp;
         {{ $t("contents.foos.title") }}&nbsp;
-
+        <!-- 
+        /////////////////////////////
+        // Search Field Start
+        /////////////////////////////
+        -->
         <v-text-field
           class="ms-10"
           v-model="searchForm.keyword"
@@ -16,6 +20,12 @@
           hide-details
           single-line
         ></v-text-field>
+        <!-- 
+        /////////////////////////////
+        // Search Field End
+        /////////////////////////////
+        -->
+
       </v-card-title>
 
       <v-divider></v-divider>
@@ -24,7 +34,7 @@
         fixed-header
         density="compact"
         :loading="loading"
-        :search="config.search"
+        :search="config.searchBy"
         :page="1"
         :items-per-page="20"
         :sort-by="config.sortBy"
@@ -35,6 +45,11 @@
         :items="entities"
         @update:options="searchAction"
       >
+        <!-- 
+        /////////////////////////////
+        # Table Cell Template Start
+        /////////////////////////////
+        -->
         <template v-slot:item.id="{ item }">
           <v-btn
             variant="plain"
@@ -44,14 +59,14 @@
             @click="readAction(item)"
           ></v-btn>
         </template>
+        <!-- 
+        /////////////////////////////
+        # Table Cell Template End
+        /////////////////////////////
+        -->
 
         <template v-slot:footer.prepend>
-          <v-btn
-            class="ms-1"
-            text
-            variant="elevated"
-            @click="refreshAction"
-          >
+          <v-btn class="ms-1" text variant="elevated" @click="refreshAction">
             <v-icon>mdi-refresh</v-icon>
           </v-btn>
 
@@ -76,16 +91,19 @@
           :subtitle="editForm.name"
         >
           <v-card-text>
-            <v-form validate-on="eager" @update:model-value="entityValidate">
-
-              
+            <v-form validate-on="eager" @update:model-value="formValidate">
+              <!-- 
+              /////////////////////////////
+              # Edit Form Start
+              /////////////////////////////
+              -->
               <v-text-field
                 class="ma-2"
                 v-model="editForm.id"
                 :rules="[$rules.requried]"
                 label="id"
                 placeholder="id"
-                :disabled="! isNew"
+                :disabled="!isNew"
                 hint="......."
                 variant="outlined"
               ></v-text-field>
@@ -109,6 +127,11 @@
                 hint="......."
                 variant="outlined"
               ></v-text-field>
+              <!-- 
+              /////////////////////////////
+              # Edit Form End
+              /////////////////////////////
+              -->
             </v-form>
           </v-card-text>
 
@@ -144,52 +167,51 @@ import $contentsApi from "@/assets/apis/contents.js";
 import $contentsStore from "@/assets/stores/contents.js";
 
 export default {
-
   data: () => ({
+    loading: false,
+    dialog: false,
+    isNew: false,
+    validate: false,
 
-      loading: false,
-      dialog: false,
-      isNew: false,
-      validate: false,
+    searchForm: {},
+    editForm: {},
 
-      searchForm: {},
-      editForm: {},
+    entities: [],
+    entitiesTotal: 0,
 
-      entities: [],
-      entitiesTotal: 0,
+    config: {
+      /////////////////////////////////
+      // Config Start
+      /////////////////////////////////
+      api: $contentsApi.foos,
 
-      config: {
+      itemsPerPageOptions: [
+        { value: 10, title: "10" },
+        { value: 20, title: "20" },
+        { value: 50, title: "50" },
+        { value: 100, title: "100" },
+      ],
+      
+      itemValue: "id",
 
-        api : $contentsApi.foos,
+      headers: [
+        { key: "id", title: "id", align: "start" },
+        { key: "name", title: "name", align: "center" },
+        { key: "age", title: "age", align: "end" },
+      ],
+      sortBy: [{ key: "id", order: "desc" }],
+      searchBy: "",
 
-        search: "",
-        itemsPerPageOptions: [
-          { value: 10, title: "10" },
-          { value: 20, title: "20" },
-          { value: 50, title: "50" },
-          { value: 100, title: "100" },
-        ],
-
-        headers: [
-          { title: "id", key: "id", align: "start" },
-          { title: "name", key: "name", align: "center" },
-          { title: "age", key: "age", align: "end" },
-        ],
-        sortBy: [{ key: "id", order: "desc" }],
-        itemValue: "id",
-
-
-        initForm: {
-          id: undefined,
-          name: undefined,
-          age: undefined,
-        },
-      },
+      initForm: {
+        id: undefined,
+        name: undefined,
+        age: undefined,
+      }
+      /////////////////////////////////
+      // Config Start
+      /////////////////////////////////
+    },
   }),
-
-  computed: {
-    subtitle: $contentsStore.computed.subtitle,
-  },
 
   watch: {
     searchForm: {
@@ -200,13 +222,11 @@ export default {
     },
   },
 
+  computed: {
+    subtitle: $contentsStore.computed.subtitle,
+  },
+
   methods: {
-
-
-
-
-
-
     ////////////////////////////////////////
     //
     ////////////////////////////////////////
@@ -234,15 +254,6 @@ export default {
       return this.$dialog.alert(msg, code);
     },
 
-    entityValidate(r) {
-      this.validate = r;
-    },
-
-    entityReset(r) {
-      this.editForm = r ? r : Object.assign({}, this.config.initForm);
-      return r;
-    },
-
     actionStart(loading) {
       this.loading = true == loading ? true : false;
       return Promise.resolve();
@@ -255,18 +266,26 @@ export default {
         this.refreshAction();
       }
     },
-    
+
+    formValidate(r) {
+      this.validate = r;
+    },
+    formReset(r) {
+      this.editForm = r ? r : Object.assign({}, this.config.initForm);
+      return r;
+    },
+
     ////////////////////////////////////////
     //
     ////////////////////////////////////////
     refreshAction() {
-      this.config.search = String(Date.now());
+      this.config.searchBy = String(Date.now());
     },
 
-    searchAction(data) {
+    searchAction(params) {
       this.actionStart(true)
         .then((r) => {
-          return this.config.api.search(this.searchForm, r);
+          return this.config.api.search(this.searchForm, params);
         })
         .then((r) => {
           this.entitiesTotal = r.entitiesTotal;
@@ -287,7 +306,7 @@ export default {
     newAction() {
       this.actionStart(true)
         .then((r) => {
-          return this.entityReset();
+          return this.formReset();
         })
         .then((r) => {
           return this.dialogOpen(true);
@@ -303,14 +322,14 @@ export default {
           return this.dialogClose();
         })
         .then((r) => {
-          return this.entityReset();
+          return this.formReset();
         })
         .then((r) => {
           return this.actionEnd(false);
         });
     },
 
-    createAction(e) {
+    createAction() {
       this.confirmBefore("create")
         .then((r) => {
           return this.actionStart(true);
@@ -322,7 +341,7 @@ export default {
           return this.confirmAfter("create");
         })
         .then((r) => {
-          return this.entityReset();
+          return this.formReset();
         })
         .then((r) => {
           return this.actionEnd(true);
@@ -335,13 +354,13 @@ export default {
         });
     },
 
-    readAction(data) {
+    readAction(entity) {
       this.actionStart(true)
         .then((r) => {
-          return this.config.api.read(data);
+          return this.config.api.read(entity);
         })
         .then((r) => {
-          return this.entityReset(r);
+          return this.formReset(r);
         })
         .then((e) => {
           return this.dialogOpen(false);
@@ -369,7 +388,7 @@ export default {
           return this.confirmAfter("update");
         })
         .then((r) => {
-          return this.entityReset();
+          return this.formReset();
         })
         .then((r) => {
           return this.actionEnd(true);
@@ -394,7 +413,7 @@ export default {
           return this.confirmAfter("delete");
         })
         .then((r) => {
-          return this.entityReset();
+          return this.formReset();
         })
         .then((r) => {
           return this.actionEnd(true);
@@ -410,19 +429,6 @@ export default {
 
   mounted() {
     this.subtitle = x;
-
-    // Promise.resolve()
-    //   .then((r) => {
-    //     console.log(x, "mounted()", 1);
-    //     return $accounts.oauth2.userinfo();
-    //   })
-    //   .catch((r) => {
-    //     console.log(x, "mounted()", 2);
-    //     this.$router.push("/");
-    //   })
-    //   .then((r) => {
-    //     console.log(x, "mounted()", 3);
-    //   });
   },
 };
 </script>

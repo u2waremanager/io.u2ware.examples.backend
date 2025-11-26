@@ -5,6 +5,8 @@ package backend.domain;
 import java.util.UUID;
 
 import backend.domain.auditing.AuditedEntity;
+import backend.domain.properties.Attributes;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -21,10 +23,12 @@ public class Item extends AuditedEntity{
     @GeneratedValue
     private UUID id;
 
-    private String organization;
+    private String title;
 
-    private String stringValue;
+    private Integer size;
 
-    private Integer integerValue;
+    @Column(length = 1024*10)
+    private Attributes attributes;
 
 }
+

@@ -7,6 +7,7 @@ import { th } from "vuetify/locale";
 const name = "[/assets/apis/contents.js]";
 
 const $contents = {
+
   api: {
     host() {
       return $common.api.host("VITE_API_BACKEND");
@@ -51,6 +52,59 @@ const $contents = {
       return $common.api.link(base, data);
     },
   },
+
+  auditors: {
+
+    currentUser(){
+      let currentUser = $contentsState.computed.currentUser.get();
+      if(currentUser){
+        return Promise.resolve(currentUser);
+      }else{
+        let oauth2 = $accountsState.computed.oauth2.get();
+        if(! oauth2) return Promise.reject(false);
+
+        return $contents.users.read(oauth2.username).then(r=>{
+          $contentsState.computed.currentUser.set(r);
+          return r;
+        });
+      }
+    },
+
+    hasPermission(roles){
+      return $contents.auditors.currentUser()
+        .then(user=>{
+          let hasRole = false;
+          for(let role of roles){
+            if(user.roles.includes(role)){
+              hasRole = true;
+              break;
+            }
+          }      
+          if(hasRole){
+            return user;
+          }
+          throw user;
+        });  
+    },
+
+    hasNotPermission(roles){
+      return $contents.auditors.currentUser()
+        .then(user=>{
+          let hasRole = false;
+          for(let role of roles){
+            if(user.roles.includes(role)){
+              hasRole = true;
+              break;
+            }
+          }          
+          if(! hasRole){
+            return user;
+          }
+          throw user;
+        });  
+    },
+  },
+
 
   foos: {
     search(data, params) {
@@ -147,7 +201,6 @@ const $contents = {
   },
 
   users: {
-
     search(data, params) {
       return $contents.api.execute((uri) => ({
         url: `${uri}/api/users/search`,
@@ -194,59 +247,53 @@ const $contents = {
 		}    
   },
 
-
-  auditors: {
-
-    currentUser(){
-      let currentUser = $contentsState.computed.currentUser.get();
-      if(currentUser){
-        return Promise.resolve(currentUser);
-      }else{
-        let oauth2 = $accountsState.computed.oauth2.get();
-        if(! oauth2) return Promise.reject(false);
-
-        return $contents.users.read(oauth2.username).then(r=>{
-          $contentsState.computed.currentUser.set(r);
-          return r;
-        });
-      }
+  items: {
+    search(data, params) {
+      return $contents.api.execute((uri) => ({
+        url: `${uri}/api/items/search`,
+        headers: $contents.api.headers(),
+        method: "POST",
+        data: data,
+        params: $common.api.pageable(params),
+      }))
+      .then((r)=>{
+        r.entitiesTotal = r.page.totalElements;
+        r.entities = r._embedded.items;
+        return r;
+      });
     },
+		create(data){
+			return $contents.api.execute((uri)=> ({
+				url: `${uri}/api/items`,
+        headers: $contents.api.headers(),
+				method : 'POST',
+				data: data,
+			}));
+		},
+		read(data){
+			return $contents.api.execute((uri)=> ({
+				url: (typeof data === 'string') ? `${uri}/api/items/${data}` : `${data._links.self.href}`,
+        headers: $contents.api.headers(),
+				method : 'POST',
+			}));
+		},
+		update(data){
+			return $contents.api.execute((uri)=> ({
+				url: (typeof data === 'string') ? `${uri}/api/items/${data}` : `${data._links.self.href}`,
+        headers: $contents.api.headers(),
+				method : 'PUT',
+				data : data
+			}));
+		},
+		delete(data){
+			return $contents.api.execute((uri)=> ({
+				url: (typeof data === 'string') ? `${uri}/api/items/${data}` : `${data._links.self.href}`,
+        headers: $contents.api.headers(),
+				method : 'DELETE',
+			}));
+		}    
+  },
 
-    hasPermission(roles){
-      return $contents.auditors.currentUser()
-        .then(user=>{
-          let hasRole = false;
-          for(let role of roles){
-            if(user.roles.includes(role)){
-              hasRole = true;
-              break;
-            }
-          }      
-          if(hasRole){
-            return user;
-          }
-          throw user;
-        });  
-    },
-
-    hasNotPermission(roles){
-      return $contents.auditors.currentUser()
-        .then(user=>{
-          let hasRole = false;
-          for(let role of roles){
-            if(user.roles.includes(role)){
-              hasRole = true;
-              break;
-            }
-          }          
-          if(! hasRole){
-            return user;
-          }
-          throw user;
-        });  
-    },
-
-  }
 
 };
 export default $contents;
