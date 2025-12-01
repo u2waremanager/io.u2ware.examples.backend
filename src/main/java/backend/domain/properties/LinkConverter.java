@@ -24,18 +24,35 @@ public class LinkConverter implements AttributeConverter<Link, String> {
     // }
 
 
-
-    @Override
-    public String convertToDatabaseColumn(Link attribute) {
-    //    logger.info("convertToDatabaseColumn: "+attribute);
+	@Override
+	public String convertToDatabaseColumn(Link attribute) {
+		logger.info("convertToDatabaseColumn: "+attribute);
+        // return null;
         return attribute != null ? attribute.getHref() : null;
-    }
+	}
 
-    @Override
-    public Link convertToEntityAttribute(String dbData) {
-    //    logger.info("convertToEntityAttribute: "+dbData);
+	@Override
+	public Link convertToEntityAttribute(String dbData) {
+		logger.info("convertToEntityAttribute: "+dbData);
         return dbData != null ? Link.of(dbData) : null;// convertToEntityAttribute;//link;//Link.of(".").withSelfRel();
-    }
+		// return Link.of(".").withSelfRel();
+        // return Link.of(".");
+		// return null;
+	}
+
+
+    // @Override
+    // public String convertToDatabaseColumn(Link attribute) {
+    //    logger.info("convertToDatabaseColumn: "+attribute);
+    //     return attribute != null ? attribute.getHref() : null;
+    // }
+
+    // @Override
+    // public Link convertToEntityAttribute(String dbData) {
+    //    logger.info("convertToEntityAttribute: "+dbData);
+    //    Link.of(".").withSelfRel();
+    //     return dbData != null ? Link.of(dbData) : null;// convertToEntityAttribute;//link;//Link.of(".").withSelfRel();
+    // }
 
 //    public static <T> T convert(){
 //        try {

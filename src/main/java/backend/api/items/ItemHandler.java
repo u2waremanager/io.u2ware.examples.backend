@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.rest.core.annotation.HandleBeforeCreate;
 import org.springframework.data.rest.core.annotation.HandleBeforeDelete;
@@ -11,7 +12,9 @@ import org.springframework.data.rest.core.annotation.HandleBeforeSave;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
 import org.springframework.stereotype.Component;
 
+import backend.domain.Foo;
 import backend.domain.Item;
+import backend.domain.properties.LinkConversion;
 import io.u2ware.common.data.rest.core.annotation.HandleAfterRead;
 import io.u2ware.common.data.rest.core.annotation.HandleBeforeRead;
 
@@ -21,59 +24,47 @@ public class ItemHandler {
     
     protected Log logger = LogFactory.getLog(getClass());
 
+    private @Autowired LinkConversion linkConversion;
+
+	private void conversion(Item e) throws Exception{
+		logger.info("conversion1 "+e.getTitle());
+		logger.info("conversion1 "+e.getFoo());
+		logger.info("conversion1 "+e.getFooLink());
+		linkConversion.convertWithEntity(Foo.class, e.getFooLink(), ref->{e.setFoo(ref);});		
+		logger.info("conversion2 "+e.getTitle());
+		logger.info("conversion2 "+e.getFoo());
+		logger.info("conversion2 "+e.getFooLink());
+	}
+
 
 
     @HandleBeforeCreate
     public void HandleBeforeCreate(Item e) throws Exception{
         logger.info("@HandleBeforeCreate : "+e);
-        // throw ResponseStatusExceptions.NOT_FOUND;
+        conversion(e);
     }
 
 
     @HandleBeforeSave
     public void HandleBeforeSave(Item e)throws Exception{
-        logger.info("@HandleBeforeSave : "+e);
-
-        // if(AuthenticationContext.hasAuthorities("ROLE_ADMIN")) return;
-        // logger.info("@HandleBeforeSave1 : ");
-
-        // throw ResponseStatusExceptions.UNAUTHORIZED;
+        logger.info("@HandleBeforeSave : "+e.getTitle());
+		logger.info("@HandleBeforeSave "+e.getFoo());
+		logger.info("@HandleBeforeSave "+e.getFooLink());
+        conversion(e);
     }
 
     @HandleBeforeDelete
     public void HandleBeforeDelete(Item e)throws Exception{
         logger.info("@HandleBeforeDelete : "+e);
-
-        // if(AuthenticationContext.hasAuthorities("ROLE_ADMIN")) return;
-        // logger.info("@HandleBeforeDelete : ");
-
-        // throw ResponseStatusExceptions.UNAUTHORIZED;
     }
 
 
 
-    @HandleAfterRead
-    public void HandleAfterRead(Item e, Serializable r)throws Exception{
-        logger.info("@HandleAfterRead : "+e);
-        logger.info("@HandleAfterRead : "+r);
-
-        // // Authentication authentication = AuthenticationContext.authentication();
-        // // logger.info("@HandleAfterRead1 : "+authentication);
-
-        // // Collection<GrantedAuthority> authorities = AuthenticationContext.authorities();
-        // // logger.info("@HandleAfterRead2 : "+e.getUpdated());
-
-        // if(AuthenticationContext.hasAuthorities("ROLE_ADMIN")) return;
-        // // logger.info("@HandleAfterRead3 : "+authorities);
-
-        // if(AuthenticationContext.hasAuthorities(e.getOrganization())) return;
-        // // logger.info("@HandleAfterRead4 : "+e.getItemGroup());
-        
-        // if(AuditedAuditor.hasCurrentUsername(e.getInserted())) return;
-        // // logger.info("@HandleAfterRead5 : "+e.getInserted());
-        
-        // throw ResponseStatusExceptions.UNAUTHORIZED;
-    }
+    // @HandleAfterRead
+    // public void HandleAfterRead(Item e, Serializable r)throws Exception{
+    //     logger.info("@HandleAfterRead : "+e);
+    //     logger.info("@HandleAfterRead : "+r);
+    // }
 
 
     @HandleBeforeRead

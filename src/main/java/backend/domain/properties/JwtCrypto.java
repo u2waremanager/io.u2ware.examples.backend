@@ -27,8 +27,8 @@ public class JwtCrypto extends HashMap<String, Object> {
         return text;
     }
 
-    public static Attributes of(String key, Object value){
-        Attributes a = new Attributes();
+    public static AttributesMap of(String key, Object value){
+        AttributesMap a = new AttributesMap();
         a.put(key, value);
         return a;
     }

@@ -8,13 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Map;
 
 @Converter(autoApply = true)
-public class AttributesConverter implements AttributeConverter<Attributes, String> {
+public class AttributesMapConverter implements AttributeConverter<AttributesMap, String> {
 
     @Autowired
     private ObjectMapper mapper;
 
     @Override
-    public String convertToDatabaseColumn(Attributes attribute) {
+    public String convertToDatabaseColumn(AttributesMap attribute) {
         try {
             if (attribute == null) return null;
 
@@ -31,10 +31,10 @@ public class AttributesConverter implements AttributeConverter<Attributes, Strin
 
     @Override
     @SuppressWarnings("unchecked")
-    public Attributes convertToEntityAttribute(String dbData) {
+    public AttributesMap convertToEntityAttribute(String dbData) {
         try {
             if (dbData == null) return null;
-            return new Attributes(mapper.readValue(dbData, Map.class));
+            return new AttributesMap(mapper.readValue(dbData, Map.class));
         } catch(Exception e) {
             return null;
         }
