@@ -2,6 +2,7 @@ package backend.domain;
 
 
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -82,11 +83,11 @@ public class Item extends AuditedEntity{
     ////////////////////////////////////////////
 	@ManyToMany(fetch=FetchType.EAGER) @JoinTable
 	@RestResource(exported = false)
-    private Set<Bar> bars;
+    private Set<Bar> bars = new HashSet<>();
 
     @Transient
 	@JsonProperty(access = Access.WRITE_ONLY)
-    private Set<Link> barsLinks;
+    private Set<Link> barsLinks = new HashSet<>();
 
 
     ////////////////////////////////////////////
@@ -95,7 +96,7 @@ public class Item extends AuditedEntity{
     ////////////////////////////////////////////
     @ElementCollection
 	@CollectionTable(name="examples_items_childs", joinColumns=@JoinColumn(name="parent"))
-	private Set<Child> childs;
+	private Set<Child> childs = new HashSet<>();
 	
 	@Embeddable
 	@Data @Builder @NoArgsConstructor @AllArgsConstructor

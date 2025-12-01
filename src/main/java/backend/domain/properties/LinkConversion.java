@@ -21,13 +21,15 @@ public class LinkConversion {
     private @Autowired @Qualifier("defaultConversionService")ConversionService conversionService;
 
     public <T> void convertWithEntity(Class<T> entityType, Link link, EntityCallback<T> callback) throws Exception {
+
+        if(link == null) return;
         try {
             T entity = conversionService.convert(link.toUri(), entityType);
             callback.convertWith(entity);
         }catch(Exception e) {
             e.printStackTrace();
-            logger.info("convertWithEntity : "+ e.getMessage());
-            throw new HttpRequestMethodNotSupportedException(e.getMessage());
+            // logger.info("convertWithEntity : "+ e.getMessage());
+            // throw new HttpRequestMethodNotSupportedException(e.getMessage());
         }
     }
 

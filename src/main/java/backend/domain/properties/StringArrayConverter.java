@@ -1,7 +1,6 @@
 package backend.domain.properties;
 
 import jakarta.persistence.AttributeConverter;
-import jakarta.persistence.Converter;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
@@ -9,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Converter(autoApply = true)
+// @Converter(autoApply = true)
 public class StringArrayConverter implements AttributeConverter<String[], String> {
     // private static final String SPLIT_CHAR = ", ";
 

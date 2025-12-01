@@ -8,11 +8,11 @@ import javax.crypto.SecretKey;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.ClassUtils;
+import org.springframework.util.StringUtils;
 
 import io.u2ware.common.oauth2.crypto.CryptoEncryptor;
 import io.u2ware.common.oauth2.crypto.CryptoKeyStore;
 import jakarta.persistence.AttributeConverter;
-import jakarta.persistence.Converter;
 
 // @Converter(autoApply = true)
 public class CryptoConverter implements AttributeConverter<String, String> {
@@ -36,25 +36,21 @@ public class CryptoConverter implements AttributeConverter<String, String> {
 
     @Override
     public String convertToDatabaseColumn(String attribute) {
+        if(! StringUtils.hasText(attribute)) return null;
         try{
-            return CryptoEncryptor.encrypt(attribute.toString(), secretKey());
+            return CryptoEncryptor.encrypt(attribute, secretKey());
         }catch(Exception e){
-            e.printStackTrace();
             return null;
         }
     }
 
     @Override
     public String convertToEntityAttribute(String dbData) {
+        if(! StringUtils.hasText(dbData)) return null;
         try{
             return CryptoEncryptor.decrypt(dbData, secretKey());
         }catch(Exception e){
-            e.printStackTrace();
-            return null;//new Crypto();
+            return null;
         }
-    }
-
-
-
-   
+    }  
 }

@@ -3,12 +3,11 @@ package backend.domain.properties;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.AttributeConverter;
-import jakarta.persistence.Converter;
 
 import java.util.Collection;
 import java.util.List;
 
-@Converter(autoApply = true)
+// @Converter(autoApply = true)
 public class StringCollectionConverter implements AttributeConverter<Collection<String>, String> {
 
     private final ObjectMapper mapper = new ObjectMapper();

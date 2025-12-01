@@ -1,9 +1,8 @@
 package backend.domain.properties;
 
 import jakarta.persistence.AttributeConverter;
-import jakarta.persistence.Converter;
 
-@Converter(autoApply = true)
+// @Converter(autoApply = true)
 public class JwtCryptoConverter implements AttributeConverter<JwtCrypto, String> {
 
     @Override
