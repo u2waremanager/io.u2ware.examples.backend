@@ -1,11 +1,15 @@
 package backend;
 
+import java.util.stream.Stream;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
+import org.springframework.security.config.crypto.RsaKeyConversionServicePostProcessor;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
@@ -22,6 +26,10 @@ class ApplicationTests {
 	private MockMvc mvc;
 
 
+	@Autowired
+	private ApplicationContext ac;
+
+
 	@Test
 	void contextLoads() throws Exception {
 
@@ -36,5 +44,16 @@ class ApplicationTests {
 						MockMvcResultHandlers.print(System.err)
 				);
 
+
+
+		// String[] names = ac.getBeanDefinitionNames();
+
+		// Stream.of(names).sorted().forEach(name->{
+		// 	logger.info(name+" => "+ac.getBean(name).getClass().getName());
+		// });
+
+
+		RsaKeyConversionServicePostProcessor f;
 	}
+
 }

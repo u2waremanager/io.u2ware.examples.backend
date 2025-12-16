@@ -22,9 +22,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.test.web.servlet.MockMvc;
 
+import backend.Oauth2Docs;
 import backend.api.bars.BarDocs;
 import backend.api.foos.FooDocs;
-import backend.api.oauth2.Oauth2Docs;
 import backend.domain.Item.Child;
 
 
@@ -136,29 +136,29 @@ public class ItemTest {
         logger.info(link1);
 
       
-        // //////////////////////////////
-        // // Update
-        // //////////////////////////////       
-        // req.put("fooLink", fooBody2);
-        // req.put("barsLinks", new Object[]{barBody2, barLink3});
-        // req.put("childs", new Object[]{c3, c4});
+        //////////////////////////////
+        // Update
+        //////////////////////////////       
+        req.put("fooLink", fooBody2);
+        req.put("barsLinks", new Object[]{barBody2, barLink3});
+        req.put("childs", new Object[]{c3, c4});
 
-        // mvc.perform(put(link1).auth(u).content(req))
-        //     .andDo(print())
-        //     .andExpect(is2xx());
+        mvc.perform(put(link1).auth(u).content(req))
+            .andDo(print())
+            .andExpect(is2xx());
 
-        // //////////////////////////////
-        // // Read
-        // //////////////////////////////
-   		// mvc.perform(post(link1).auth(u))
-        //     .andDo(print())
-        //     .andExpect(is2xx());
+        //////////////////////////////
+        // Read
+        //////////////////////////////
+   		mvc.perform(post(link1).auth(u))
+            .andDo(print())
+            .andExpect(is2xx());
 
-        // //////////////////////////////
-        // // Delete
-        // //////////////////////////////
-   		// mvc.perform(delete(link1).auth(u))
-        //     .andDo(print())
-        //     .andExpect(is2xx());
+        //////////////////////////////
+        // Delete
+        //////////////////////////////
+   		mvc.perform(delete(link1).auth(u))
+            .andDo(print())
+            .andExpect(is2xx());
     }
 }

@@ -1,4 +1,4 @@
-package backend.api.oauth2;
+package backend;
 
 
 import java.time.Instant;
@@ -6,16 +6,22 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
+import com.nimbusds.jose.jwk.RSAKey;
+
 import io.u2ware.common.docs.MockMvcRestDocs;
-import io.u2ware.common.oauth2.crypto.JoseEncryptor;
+import io.u2ware.common.oauth2.crypto.JoseKeyEncryptor;
 
 
 @Component
 public class Oauth2Docs extends MockMvcRestDocs {
+
+    @Autowired
+    private RSAKey joseRsaKey;
 
     public Jwt jwt(String username, String... authorities) {
 
@@ -42,7 +48,7 @@ public class Oauth2Docs extends MockMvcRestDocs {
     public Jwt jose(String username, String... authorities) {
 
         try{
-            return JoseEncryptor.getInstance().encrypt(claims->{
+            return JoseKeyEncryptor.encrypt(joseRsaKey, claims->{
 
                 claims.put("sub", username);
                 claims.put("email", username);

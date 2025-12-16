@@ -10,8 +10,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
-import io.u2ware.common.oauth2.crypto.CryptoEncryptor;
-import io.u2ware.common.oauth2.crypto.CryptoKeyStore;
+import io.u2ware.common.oauth2.crypto.CryptoKeyEncryptor;
+import io.u2ware.common.oauth2.crypto.CryptoKeyFiles;
 import jakarta.persistence.AttributeConverter;
 
 // @Converter(autoApply = true)
@@ -25,7 +25,7 @@ public class CryptoConverter implements AttributeConverter<String, String> {
             String name = ClassUtils.getShortName(getClass());
             Resource resource = new ClassPathResource(name, getClass());
             Path path = Paths.get(resource.getURI());
-            this.secretKey = CryptoKeyStore.load(path, "AES");
+            this.secretKey = CryptoKeyFiles.readAESKey(path);
             
         }catch(Exception e){
             e.printStackTrace();
@@ -38,7 +38,7 @@ public class CryptoConverter implements AttributeConverter<String, String> {
     public String convertToDatabaseColumn(String attribute) {
         if(! StringUtils.hasText(attribute)) return null;
         try{
-            return CryptoEncryptor.encrypt(attribute, secretKey());
+            return CryptoKeyEncryptor.encrypt(secretKey(), attribute);
         }catch(Exception e){
             return null;
         }
@@ -48,7 +48,7 @@ public class CryptoConverter implements AttributeConverter<String, String> {
     public String convertToEntityAttribute(String dbData) {
         if(! StringUtils.hasText(dbData)) return null;
         try{
-            return CryptoEncryptor.decrypt(dbData, secretKey());
+            return CryptoKeyEncryptor.decrypt(secretKey(), dbData);
         }catch(Exception e){
             return null;
         }
