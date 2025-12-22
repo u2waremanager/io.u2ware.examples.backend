@@ -54,8 +54,8 @@
         "users" : {
             "title" : "Users"
         },
-        "tokens" : {
-            "title" : "Token"
+        "channels" : {
+            "title" : "Channels"
         }
     },
 

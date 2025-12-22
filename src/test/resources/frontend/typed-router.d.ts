@@ -25,9 +25,10 @@ declare module 'vue-router/auto-routes' {
     '/accounts/logoff': RouteRecordInfo<'/accounts/logoff', '/accounts/logoff', Record<never, never>, Record<never, never>>,
     '/accounts/logon': RouteRecordInfo<'/accounts/logon', '/accounts/logon', Record<never, never>, Record<never, never>>,
     '/accounts/logout': RouteRecordInfo<'/accounts/logout', '/accounts/logout', Record<never, never>, Record<never, never>>,
-    '/contents': RouteRecordInfo<'/contents', '/contents', Record<never, never>, Record<never, never>, '/contents/' | '/contents/bars' | '/contents/foos' | '/contents/items' | '/contents/tokens' | '/contents/users'>,
+    '/contents': RouteRecordInfo<'/contents', '/contents', Record<never, never>, Record<never, never>, '/contents/' | '/contents/bars' | '/contents/channels' | '/contents/foos' | '/contents/items' | '/contents/tokens' | '/contents/users'>,
     '/contents/': RouteRecordInfo<'/contents/', '/contents', Record<never, never>, Record<never, never>>,
     '/contents/bars': RouteRecordInfo<'/contents/bars', '/contents/bars', Record<never, never>, Record<never, never>>,
+    '/contents/channels': RouteRecordInfo<'/contents/channels', '/contents/channels', Record<never, never>, Record<never, never>>,
     '/contents/foos': RouteRecordInfo<'/contents/foos', '/contents/foos', Record<never, never>, Record<never, never>>,
     '/contents/items': RouteRecordInfo<'/contents/items', '/contents/items', Record<never, never>, Record<never, never>>,
     '/contents/tokens': RouteRecordInfo<'/contents/tokens', '/contents/tokens', Record<never, never>, Record<never, never>>,
@@ -92,7 +93,7 @@ declare module 'vue-router/auto-routes' {
       views: never
     }
     'src/pages/contents.vue': {
-      routes: '/contents' | '/contents/' | '/contents/bars' | '/contents/foos' | '/contents/items' | '/contents/tokens' | '/contents/users'
+      routes: '/contents' | '/contents/' | '/contents/bars' | '/contents/channels' | '/contents/foos' | '/contents/items' | '/contents/tokens' | '/contents/users'
       views: 'default'
     }
     'src/pages/contents/index.vue': {
@@ -101,6 +102,10 @@ declare module 'vue-router/auto-routes' {
     }
     'src/pages/contents/bars.vue': {
       routes: '/contents/bars'
+      views: never
+    }
+    'src/pages/contents/channels.vue': {
+      routes: '/contents/channels'
       views: never
     }
     'src/pages/contents/foos.vue': {
