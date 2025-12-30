@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
@@ -13,12 +14,15 @@ import org.springframework.util.ObjectUtils;
 import com.nimbusds.jose.jwk.RSAKey;
 
 import io.u2ware.common.docs.MockMvcRestDocs;
-import io.u2ware.common.oauth2.crypto.JoseKeyEncryptor;
-import io.u2ware.common.oauth2.jwt.JwtDecoderBuilder;
+import io.u2ware.common.oauth2.jose.JoseKeyEncryptor;
+import io.u2ware.common.oauth2.jwt.JwtConfiguration;
 
 
 @Component
 public class Oauth2Docs extends MockMvcRestDocs {
+
+    protected @Autowired(required = false) JwtConfiguration jwtConfiguration;
+
 
     public Jwt jwt(String username, String... authorities) {
 
@@ -44,11 +48,9 @@ public class Oauth2Docs extends MockMvcRestDocs {
     
     public Jwt jose(String username, String... authorities) {
 
-
         try{
-            RSAKey joseRsaKey = JwtDecoderBuilder.getInstance().getJoseRsaKey();
-            System.err.println("#####"+joseRsaKey.hashCode());
-            return JoseKeyEncryptor.encrypt(joseRsaKey, claims->{
+            return JoseKeyEncryptor.encrypt(jwtConfiguration.jwtEncoder(), claims->{
+
                 claims.put("sub", username);
                 claims.put("email", username);
                 claims.put("name", username);
@@ -61,7 +63,6 @@ public class Oauth2Docs extends MockMvcRestDocs {
         }catch(Exception e){
             return null;
         }
-
     }
     
 }
