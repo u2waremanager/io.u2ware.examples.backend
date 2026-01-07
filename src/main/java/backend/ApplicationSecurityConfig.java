@@ -1,5 +1,6 @@
 package backend;
 
+import java.util.Collection;
 import java.util.Collections;
 
 import org.apache.commons.logging.Log;
@@ -9,13 +10,16 @@ import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
@@ -26,7 +30,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import backend.config.OAuth2ResourceServerConfigurationSupport;
+import io.u2ware.common.oauth2.jwt.OAuth2ResourceServerAdministration;
+
 
 
 
@@ -52,21 +57,36 @@ public class ApplicationSecurityConfig {
         return source;
     }
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, OAuth2ResourceServerAdministration admin) throws Exception {
         http
             .csrf(AbstractHttpConfigurer::disable)
             .cors(Customizer.withDefaults())
-            .authorizeHttpRequests(authorize -> 
+            .authorizeHttpRequests(authorize -> {
+
+
+                    // if(admin.available()) {                    
+                    //     authorize.requestMatchers("/stomp/**").authenticated();
+                    // }else{
+                    //     authorize.requestMatchers("/stomp/**").permitAll();
+                    // }
+
                     authorize
                         .requestMatchers(HttpMethod.GET, "/api").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/profile/**").permitAll()
                         .requestMatchers("/api/**").authenticated()
-                        .anyRequest().permitAll()
+                        .anyRequest().permitAll()  ;
+
+
+
+                }
             )
             .oauth2ResourceServer(oauth2->oauth2
                 .jwt(Customizer.withDefaults())
             )
-            
+            .formLogin(formLogin -> formLogin
+                .successHandler(admin.authenticationSuccessHandler())
+                .failureHandler(admin.authenticationFailureHandler())
+            )            
             ;
         
         return http.build();
@@ -88,32 +108,34 @@ public class ApplicationSecurityConfig {
 	private @Autowired OAuth2ResourceServerProperties oauth2ResourceServerProperties;
 
     @Bean
-    public OAuth2ResourceServerConfigurationSupport oauth2ResourceServerConfigurationSupport() {
-        return new OAuth2ResourceServerConfigurationSupport(securityProperties, oauth2ResourceServerProperties);
+    public OAuth2ResourceServerAdministration oauth2ResourceServerAdministration() {
+        return new OAuth2ResourceServerAdministration(securityProperties, oauth2ResourceServerProperties);
     }
 
 
     /////////////////////////////////////////////////////////
     // 
     /////////////////////////////////////////////////////////
-    @Bean
-    public JwtEncoder jwtEncoder(OAuth2ResourceServerConfigurationSupport support) throws Exception{
-        return support.jwtEncoder();
-    }
-
-    @Bean 
-    public JwtDecoder jwtDecoder(OAuth2ResourceServerConfigurationSupport support) throws Exception{
-        return support.jwtDecoder();
-    }
-
-    @Bean 
-    public JwtAuthenticationConverter jwtAuthenticationConverter(OAuth2ResourceServerConfigurationSupport support) {
-        return support.jwtConverter();
-    }
-
 	@Bean
-	public UserDetailsService userDetailsService(OAuth2ResourceServerConfigurationSupport support) {
-		return support.userDetailsService();
+	public UserDetailsService userDetailsService(OAuth2ResourceServerAdministration admin) {
+		return admin.userDetailsService();
 	}
+
+    @Bean
+    public JwtEncoder jwtEncoder(OAuth2ResourceServerAdministration admin) throws Exception{
+        return admin.jwtEncoder();
+    }
+
+    @Bean 
+    public JwtDecoder jwtDecoder(OAuth2ResourceServerAdministration admin) throws Exception{
+        return admin.jwtDecoder();
+    }
+
+    @Bean 
+    public JwtAuthenticationConverter jwtAuthenticationConverter(OAuth2ResourceServerAdministration admin) {
+        return admin.jwtConverter(oauth2Service);
+    }
+
+    private @Autowired Converter<Jwt, Collection<GrantedAuthority>> oauth2Service;
 
 }
