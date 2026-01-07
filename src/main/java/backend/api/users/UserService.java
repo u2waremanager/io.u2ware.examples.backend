@@ -26,6 +26,7 @@ public class UserService implements Converter<Jwt, Collection<GrantedAuthority>>
 
         logger.info("convert");
 
+
         return AuthenticationContext.authorities(jwt);
     }
 
@@ -36,7 +37,6 @@ public class UserService implements Converter<Jwt, Collection<GrantedAuthority>>
 
 
         return null;
-
     }
     
 }

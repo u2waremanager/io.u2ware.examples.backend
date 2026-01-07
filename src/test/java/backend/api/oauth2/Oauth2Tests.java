@@ -88,8 +88,7 @@ public class Oauth2Tests {
 
 
         //Step 5
-        mvc.perform(get("/api/profile").auth(token)).andDo(print()) .andExpect(is2xx());
-
+        mvc.perform(get("/oauth2/userinfo").auth(token)).andDo(print()) .andExpect(is2xx());
     }
 
 
