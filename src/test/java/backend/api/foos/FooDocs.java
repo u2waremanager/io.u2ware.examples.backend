@@ -21,6 +21,14 @@ public class FooDocs extends MockMvcRestDocs {
         return r;
     }
 
+    public Map<String,Object> resetEntity(Map<String,Object> r){
+
+        r.put("name", super.randomText("Foo2-"));
+        r.put("age", super.randomInt());
+        return r;
+    }
+
+
     public Map<String,Object> searchEntity(){
 
         Map<String,Object> r = new HashMap<>();

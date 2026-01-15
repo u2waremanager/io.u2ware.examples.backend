@@ -1,23 +1,24 @@
 import $common from "@/assets/apis/common.js";
+import $commonStore from "@/assets/stores/common.js";
 
-import $contentsStore from "@/assets/stores/contents.js";
+// import $contentsStore from "@/assets/stores/contents.js";
 
 const name = "[/assets/apis/contents.js]";
 
 const $contentsApi = {
   api: {
     execute(optionsBuilder) {
-      return $common.api
-        .env("VITE_API_BACKEND", "VITE_API_TOKEN")
+      return $common.meta
+        .env("VITE_API_CONTENTS", "VITE_API_TOKEN")
         .then(optionsBuilder)
         .then((e) => {
-          return $common.axios.execute(e);
+          return $common.api.execute(e);
         })
         .then((e) => {
-          return $common.axios.then(e);
+          return $common.api.then(e);
         })
         .catch((e) => {
-          throw $common.axios.catch(e);
+          throw $common.api.catch(e);
         });
     },
 
@@ -25,25 +26,29 @@ const $contentsApi = {
       if (typeof data == "object") {
         return `${data._links.self.href}`;
       } else {
-        return `${env["VITE_API_BACKEND"]}${data}`;
+        return `${env["VITE_API_CONTENTS"]}${data}`;
       }
     },
 
-    headers(env, headers) {
-      // let t = env["VITE_API_TOKEN"];
-      // let token = t == undefined ? $commonStore.computed.oauth2.get() : t;
-      let token = env["VITE_API_TOKEN"];
+    token(env){
+      let t = env["VITE_API_TOKEN"];
+      let token = t == undefined ? $commonStore.computed.token.get() : t;
+      return token;
+    }, 
 
-      if(token == undefined) {
-        return (headers == undefined) ? {} : headers;
-      }
-      let authorization = `Bearer ${token}`;
-      if (headers == undefined) {
-        return { Authorization: authorization };
-      } else {
-        headers["Authorization"] = authorization;
-        return headers;
-      }
+    headers(env, headers) {
+      let token = $contentsApi.api.token(env);
+      return $common.api.headers(headers, token);
+    },
+
+    params(env, params){
+      let token = $contentsApi.api.token(env);
+      return $common.api.params(params, token);
+    },
+
+    query(env, query) {
+      let token = $contentsApi.api.token(env);
+      return $common.api.query(query, token);
     },
 
     pageable(data) {
@@ -51,6 +56,34 @@ const $contentsApi = {
     },
   },
 
+
+  /////////////////////////////////////
+  //
+  /////////////////////////////////////
+  oauth2: {
+    userinfo(role) {
+      return $contentsApi.api.execute((e) => ({
+        method: "GET",
+        url: $contentsApi.api.url(e, "/oauth2/userinfo"),
+        headers: $contentsApi.api.headers(e, {}),        
+      })).then(r => {
+        if(role == undefined) return r;        
+        let idx = r.roles.findIndex(e=>{
+          return e == role;
+        });
+        if(idx > -1) {
+          return r;
+        }else{
+          throw r;
+        }
+      });
+    },    
+  },
+
+
+  /////////////////////////////////////
+  //
+  /////////////////////////////////////
   foos: {
     search(data, params) {
       return $contentsApi.api
@@ -60,12 +93,7 @@ const $contentsApi = {
           headers: $contentsApi.api.headers(e, {}),
           params: $contentsApi.api.pageable(params),
           data: data,
-        }))
-        .then((r) => {
-          r.entitiesTotal = r.page.totalElements;
-          r.entities = r._embedded.foos;
-          return r;
-        });
+        }));
     },
     create(data) {
       return $contentsApi.api.execute((e) => ({
@@ -99,6 +127,9 @@ const $contentsApi = {
     },
   },
 
+  /////////////////////////////////////
+  //
+  /////////////////////////////////////
   bars: {
     search(data, params) {
       return $contentsApi.api
@@ -108,12 +139,7 @@ const $contentsApi = {
           headers: $contentsApi.api.headers(e, {}),
           params: $contentsApi.api.pageable(params),
           data: data,
-        }))
-        .then((r) => {
-          r.entitiesTotal = r.page.totalElements;
-          r.entities = r._embedded.bars;
-          return r;
-        });
+        }));
     },
     create(data) {
       return $contentsApi.api.execute((e) => ({
@@ -147,6 +173,9 @@ const $contentsApi = {
     },
   },
 
+  /////////////////////////////////////
+  //
+  /////////////////////////////////////
   items: {
     search(data, params) {
       return $contentsApi.api
@@ -156,12 +185,7 @@ const $contentsApi = {
           headers: $contentsApi.api.headers(e, {}),
           params: $contentsApi.api.pageable(params),
           data: data,
-        }))
-        .then((r) => {
-          r.entitiesTotal = r.page.totalElements;
-          r.entities = r._embedded.items;
-          return r;
-        });
+        }));
     },
     create(data) {
       return $contentsApi.api.execute((e) => ({
@@ -195,6 +219,9 @@ const $contentsApi = {
     },
   },
 
+  /////////////////////////////////////
+  //
+  /////////////////////////////////////
   users: {
     search(data, params) {
       return $contentsApi.api
@@ -204,12 +231,7 @@ const $contentsApi = {
           headers: $contentsApi.api.headers(e, {}),
           params: $contentsApi.api.pageable(params),
           data: data,
-        }))
-        .then((r) => {
-          r.entitiesTotal = r.page.totalElements;
-          r.entities = r._embedded.users;
-          return r;
-        });
+        }));
     },
     create(data) {
       return $contentsApi.api.execute((e) => ({
@@ -243,73 +265,25 @@ const $contentsApi = {
     },
   },
 
-  channels: {
-    search(data, params) {
-      return $contentsApi.api
-        .execute((e) => ({
-          method: "POST",
-          url: $contentsApi.api.url(e, "/api/channels/search"),
-          headers: $contentsApi.api.headers(e, {}),
-          params: $contentsApi.api.pageable(params),
-          data: data,
-        }))
-        .then((r) => {
-          r.entitiesTotal = r.page.totalElements;
-          r.entities = r._embedded.channels;
-          return r;
-        });
-    },
-  },
+  // channels: {
+  //   search(data, params) {
+  //     return $contentsApi.api
+  //       .execute((e) => ({
+  //         method: "POST",
+  //         url: $contentsApi.api.url(e, "/api/channels/search"),
+  //         headers: $contentsApi.api.headers(e, {}),
+  //         params: $contentsApi.api.pageable(params),
+  //         data: data,
+  //       }))
+  //       .then((r) => {
+  //         r.entitiesTotal = r.page.totalElements;
+  //         r.entities = r._embedded.channels;
+  //         return r;
+  //       });
+  //   },
+  // },
 
 
-
-  oauth2: {
-    info() {
-      return $contentsApi.api.execute((e) => {
-        let options = {
-          method: "GET",
-          url: $contentsApi.api.url(e, "/api/oauth2/userinfo"),
-          headers: $contentsApi.api.headers(e, {}),
-        };
-        return options;
-      }).then(r => {
-        $contentsStore.computed.currentUser.set(r);
-        return r;
-      });
-    },
-
-    permission(roles) {
-      return $contentsApi.oauth2.info().then((user) => {
-        let hasRole = false;
-        for (let role of roles) {
-          if (user.roles.includes(role)) {
-            hasRole = true;
-            break;
-          }
-        }
-        if (hasRole) {
-          return user;
-        }
-        throw user;
-      });
-    },
-
-    permissionNot(roles) {
-      return $contentsApi.oauth2.info().then((user) => {
-        let hasRole = false;
-        for (let role of roles) {
-          if (user.roles.includes(role)) {
-            hasRole = true;
-            break;
-          }
-        }
-        if (!hasRole) {
-          return user;
-        }
-        throw user;
-      });
-    },
-  },
 };
 
 export default $contentsApi;

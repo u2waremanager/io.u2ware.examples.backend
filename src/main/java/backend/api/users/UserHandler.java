@@ -26,12 +26,19 @@ public class UserHandler {
 
     @HandleBeforeCreate
     public void HandleBeforeCreate(User e) throws Exception{
-        throw ResponseStatusExceptions.NOT_FOUND;
+        logger.info("@HandleBeforeCreate : "+e);
+        logger.info("@HandleBeforeCreate : "+e.getAuthorities());
+        logger.info("@HandleBeforeCreate : "+AuditedAuditor.hasNotPermission("ROLE_ADMIN"));
+        if(AuditedAuditor.hasNotPermission("ROLE_ADMIN")) {
+            throw ResponseStatusExceptions.UNAUTHORIZED;
+        }
     }
 
     @HandleBeforeSave
     public void HandleBeforeSave(User e)throws Exception{
-        // logger.info("@HandleBeforeSave : "+e);
+        logger.info("@HandleBeforeSave : "+e);
+        logger.info("@HandleBeforeSave : "+e.getAuthorities());
+        logger.info("@HandleBeforeSave : "+AuditedAuditor.hasNotPermission("ROLE_ADMIN"));
         if(AuditedAuditor.hasNotPermission("ROLE_ADMIN")) {
             throw ResponseStatusExceptions.UNAUTHORIZED;
         }
@@ -39,7 +46,7 @@ public class UserHandler {
 
     @HandleBeforeDelete
     public void HandleBeforeDelete(User e)throws Exception{
-        // logger.info("@HandleBeforeDelete : "+e);
+        logger.info("@HandleBeforeDelete : "+e);
         if(AuditedAuditor.hasNotPermission("ROLE_ADMIN")) {
             throw ResponseStatusExceptions.UNAUTHORIZED;
         }
@@ -48,8 +55,7 @@ public class UserHandler {
 
     @HandleAfterRead
     public void HandleAfterRead(User e, Serializable r)throws Exception{
-        // logger.info("@HandleAfterRead : "+e);
-        // logger.info("@HandleAfterRead : "+r);
+        logger.info("@HandleAfterRead : "+e);
         if(AuditedAuditor.hasNotPermission(e.getInserted(), "ROLE_ADMIN")) {
             throw ResponseStatusExceptions.UNAUTHORIZED;
         }
@@ -58,7 +64,7 @@ public class UserHandler {
 
     @HandleBeforeRead
     public void HandleBeforeRead(User e, Specification<User> r)throws Exception{
-
+        logger.info("@HandleBeforeRead : "+e);
         if(AuditedAuditor.hasNotPermission("ROLE_ADMIN")) {
             throw ResponseStatusExceptions.UNAUTHORIZED;
         }

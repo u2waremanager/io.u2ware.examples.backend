@@ -5,7 +5,10 @@ import static io.u2ware.common.docs.MockMvcRestDocs.is2xx;
 import static io.u2ware.common.docs.MockMvcRestDocs.is4xx;
 import static io.u2ware.common.docs.MockMvcRestDocs.post;
 import static io.u2ware.common.docs.MockMvcRestDocs.print;
-import static io.u2ware.common.docs.MockMvcRestDocs.result;
+
+import java.util.Map;
+
+import static io.u2ware.common.docs.MockMvcRestDocs.*;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,12 +38,14 @@ public class FooTests {
 	protected @Autowired FooDocs fd;
 
 
+
+
 	@Test
 	void contextLoads1() throws Exception{
 		
-        Jwt u = od.jose("fooUser");
-
 		mvc.perform(get("/api/profile/foos")).andExpect(is2xx()).andDo(print());
+
+        Jwt u = od.jose("fooUser");
 
 		//////////////////////////////////////////////
 		// CrudRepository
@@ -51,27 +56,33 @@ public class FooTests {
 		mvc.perform(get("/api/foos/search")).andExpect(is4xx());          // unauthorized
 		mvc.perform(get("/api/foos/search").auth(u)).andExpect(is2xx());  // ok
 
+		mvc.perform(post("/api/foos/search")).andExpect(is4xx());          // unauthorized
+		mvc.perform(post("/api/foos/search").auth(u)).andExpect(is4xx());  // not supported
 
+		// C
 		mvc.perform(post("/api/foos").content(fd::newEntity, "a")).andExpect(is4xx());
 		mvc.perform(post("/api/foos").auth(u).content(fd::newEntity, "a")).andExpect(is2xx())
 			.andDo(result(fd::context, "f1"));
 
 
+		// R
 		String uri = fd.context("f1", "$._links.self.href");
 		mvc.perform(get(uri)).andExpect(is4xx());             // unauthorized
-		mvc.perform(get(uri).auth(u)).andExpect(is2xx());     // ok
+		mvc.perform(get(uri).auth(u)).andExpect(is2xx()).andDo(print());// ok
+
+		mvc.perform(post(uri)).andExpect(is4xx());         // unauthorized
+		mvc.perform(post(uri).auth(u)).andExpect(is4xx()); // not supported
 
 
+		// U
+		Map<String,Object> body = fd.context("f1");
+		mvc.perform(put(uri).content(fd::resetEntity, body)).andExpect(is4xx());     // unauthorized
+		mvc.perform(put(uri).content(fd::resetEntity, body).auth(u)).andExpect(is2xx()).andDo(print());     // ok
 
-		//////////////////////////////////////////////
-		// RestfulJpaRepository
-		//////////////////////////////////////////////
-		mvc.perform(post("/api/foos/search")).andExpect(is4xx());          // unauthorized
-		mvc.perform(post("/api/foos/search").auth(u)).andExpect(is4xx());  // not supported
 
-		mvc.perform(post(uri)).andExpect(is4xx());             // unauthorized
-		mvc.perform(post(uri).auth(u)).andExpect(is4xx());     // not supported
-
+		// D
+		mvc.perform(delete(uri)).andExpect(is4xx());         // unauthorized
+		mvc.perform(delete(uri).auth(u)).andExpect(is2xx()); // ok
 
 
 

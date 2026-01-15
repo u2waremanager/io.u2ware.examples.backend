@@ -28,7 +28,7 @@
 
 <script>
 const x = "[/]";
-import $contentsApi from "@/assets/apis/contents";
+import $accountsApi from "@/assets/apis/accounts";
 
 export default {
   data: () => ({}),
@@ -39,18 +39,15 @@ export default {
 
   methods: {
     start() {
-      Promise.resolve()
+      $accountsApi.oauth2
+        .userinfo()
         .then((r) => {
-          console.log(x, "start()", 1);
-          return $contentsApi.oauth2.info();
-        })
-        .then((r) => {
-          console.log(x, "start()", 2, r);
+          console.log(x, "start()", 1, r);
           this.$router.push(`/contents`);
         })
         .catch((r) => {
-          console.log(x, "start()", 3, r);
-          // this.$router.push(`/accounts`);
+          console.log(x, "start()", 222, r);
+          this.$router.push(`/accounts/login`);
         });
     },
   },

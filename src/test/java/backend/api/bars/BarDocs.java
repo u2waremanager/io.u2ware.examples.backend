@@ -18,6 +18,14 @@ public class BarDocs extends MockMvcRestDocs {
         return r;
     }
 
+
+    public Map<String,Object> resetEntity(Map<String,Object> r){
+
+        r.put("name", super.randomText("Bar2-"));
+        r.put("age", super.randomInt());
+        return r;
+    }
+
     public Map<String,Object> searchEntity(){
         Map<String,Object> r = new HashMap<>();
 

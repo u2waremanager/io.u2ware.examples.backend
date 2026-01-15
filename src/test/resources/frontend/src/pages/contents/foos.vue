@@ -91,7 +91,7 @@
           :subtitle="editForm.name"
         >
           <v-card-text>
-            <v-form validate-on="eager" @update:model-value="formValidate">
+            <v-form validate-on="eager" @update:model-value="dialogValidate">
               <!-- 
               /////////////////////////////
               # Edit Form Start
@@ -180,18 +180,17 @@ export default {
     entitiesTotal: 0,
 
     config: {
-      /////////////////////////////////
-      // Config Start
-      /////////////////////////////////
-      api: $contentsApi.foos,
-
+      searchBy: "",
       itemsPerPageOptions: [
         { value: 10, title: "10" },
         { value: 20, title: "20" },
         { value: 50, title: "50" },
         { value: 100, title: "100" },
       ],
-      
+
+      /////////////////////////////////
+      // Config Start
+      /////////////////////////////////
       itemValue: "id",
 
       headers: [
@@ -199,8 +198,9 @@ export default {
         { key: "name", title: "name", align: "center" },
         { key: "age", title: "age", align: "end" },
       ],
-      sortBy: [{ key: "id", order: "desc" }],
-      searchBy: "",
+      sortBy: [
+        { key: "id", order: "desc" }
+      ],
 
       initForm: {
         id: undefined,
@@ -208,7 +208,7 @@ export default {
         age: undefined,
       }
       /////////////////////////////////
-      // Config Start
+      // Config End
       /////////////////////////////////
     },
   }),
@@ -227,6 +227,35 @@ export default {
   },
 
   methods: {
+
+    ////////////////////////////////////////
+    // handle....
+    ////////////////////////////////////////
+    handleCreate(){
+      return $contentsApi.foos.create(this.editForm);
+    },
+    handleRead(entity){
+      return $contentsApi.foos.read(entity);
+    },
+    handleUpdate(){
+      return $contentsApi.foos.update(this.editForm);
+    },
+    handleDelete(){
+      return $contentsApi.foos.delete(this.editForm);
+    },
+    handleSearch(query){
+      return $contentsApi.foos.search(this.searchForm, query);
+    },
+    handleEntities(res){
+      this.entitiesTotal = res.page.totalElements;
+      this.entities = res._embedded.foos;
+      return res;
+    },
+    handleEntity(res){
+      this.editForm = res ? res : Object.assign({}, this.config.initForm);
+      return res;
+    },
+
     ////////////////////////////////////////
     //
     ////////////////////////////////////////
@@ -240,7 +269,13 @@ export default {
       this.isNew = false;
       return "closed";
     },
-
+    dialogValidate(r){
+      this.validate = r;
+    },
+    
+    ////////////////////////////////////////
+    //
+    ////////////////////////////////////////
     confirmBefore(code) {
       let msg = this.$t(`$dialog.before.${code}`);
       return this.$dialog.confirm(msg);
@@ -254,6 +289,9 @@ export default {
       return this.$dialog.alert(msg, code);
     },
 
+    ////////////////////////////////////////
+    //
+    ////////////////////////////////////////
     actionStart(loading) {
       this.loading = true == loading ? true : false;
       return Promise.resolve();
@@ -267,14 +305,7 @@ export default {
       }
     },
 
-    formValidate(r) {
-      this.validate = r;
-    },
-    formReset(r) {
-      this.editForm = r ? r : Object.assign({}, this.config.initForm);
-      return r;
-    },
-
+    
     ////////////////////////////////////////
     //
     ////////////////////////////////////////
@@ -285,12 +316,10 @@ export default {
     searchAction(params) {
       this.actionStart(true)
         .then((r) => {
-          return this.config.api.search(this.searchForm, params);
+          return this.handleSearch(params);
         })
         .then((r) => {
-          this.entitiesTotal = r.entitiesTotal;
-          this.entities = r.entities;
-          return r;
+          return this.handleEntities(r);
         })
         .then((r) => {
           return this.actionEnd(false);
@@ -306,7 +335,7 @@ export default {
     newAction() {
       this.actionStart(true)
         .then((r) => {
-          return this.formReset();
+          return this.handleEntity();
         })
         .then((r) => {
           return this.dialogOpen(true);
@@ -322,7 +351,7 @@ export default {
           return this.dialogClose();
         })
         .then((r) => {
-          return this.formReset();
+          return this.handleEntity();
         })
         .then((r) => {
           return this.actionEnd(false);
@@ -335,13 +364,13 @@ export default {
           return this.actionStart(true);
         })
         .then((r) => {
-          return this.config.api.create(this.editForm);
+          return this.handleCreate();
         })
         .then((r) => {
           return this.confirmAfter("create");
         })
         .then((r) => {
-          return this.formReset();
+          return this.handleEntity();
         })
         .then((r) => {
           return this.actionEnd(true);
@@ -357,10 +386,10 @@ export default {
     readAction(entity) {
       this.actionStart(true)
         .then((r) => {
-          return this.config.api.read(entity);
+          return this.handleRead(entity);
         })
         .then((r) => {
-          return this.formReset(r);
+          return this.handleEntity(r);
         })
         .then((e) => {
           return this.dialogOpen(false);
@@ -382,13 +411,13 @@ export default {
           return this.actionStart(true);
         })
         .then((r) => {
-          return this.config.api.update(this.editForm);
+          return this.handleUpdate();
         })
         .then((r) => {
           return this.confirmAfter("update");
         })
         .then((r) => {
-          return this.formReset();
+          return this.handleEntity();
         })
         .then((r) => {
           return this.actionEnd(true);
@@ -407,13 +436,13 @@ export default {
           return this.actionStart(true);
         })
         .then((r) => {
-          return this.config.api.delete(this.editForm);
+          return this.handleDelete();
         })
         .then((r) => {
           return this.confirmAfter("delete");
         })
         .then((r) => {
-          return this.formReset();
+          return this.handleEntity();
         })
         .then((r) => {
           return this.actionEnd(true);

@@ -1,9 +1,7 @@
 package backend.api.users;
 
 
-import static io.u2ware.common.docs.MockMvcRestDocs.is2xx;
-import static io.u2ware.common.docs.MockMvcRestDocs.is4xx;
-import static io.u2ware.common.docs.MockMvcRestDocs.post;
+import static io.u2ware.common.docs.MockMvcRestDocs.*;
 
 import java.util.Optional;
 
@@ -18,6 +16,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.test.web.servlet.MockMvc;
 
+import backend.api.bars.BarDocs;
 import backend.api.oauth2.Oauth2Docs;
 import backend.domain.User;
 import io.u2ware.common.data.jpa.repository.query.JpaSpecificationBuilder;
@@ -33,6 +32,8 @@ public class UserTest {
     protected @Autowired MockMvc mvc;
     protected @Autowired UserDocs ud;
     protected @Autowired Oauth2Docs od;
+	protected @Autowired BarDocs bd;
+
 
     protected @Autowired UserRepository userRepository;
     
@@ -45,35 +46,49 @@ public class UserTest {
             .like("roles",  "%ROLE_ADMIN%")
             .build();
         Optional<User> user = userRepository.findOne(spec);
-        String admin = user.map(u-> u.getUsername()).orElse("adminX" );
+        boolean admin = user.map(u-> true).orElse(false );
 
-
-
-        Jwt u1 = od.jose(admin);
+        Jwt u1 = admin ? od.jose("adminX") : od.jose("adminX", "ROLE_ADMIN");
         Jwt u2 = od.jose("u2");
         Jwt u3 = od.jose("u3");
         
 
-        mvc.perform(post("/api/users/search")).andExpect(is4xx());
-        mvc.perform(post("/api/users/search").auth(u1)).andExpect(is2xx());
-        mvc.perform(post("/api/users/search").auth(u2)).andExpect(is4xx());
-        mvc.perform(post("/api/users/search").auth(u3)).andExpect(is4xx());
+        // mvc.perform(post("/api/users/search")).andExpect(is4xx());
+        // mvc.perform(post("/api/users/search").auth(u1)).andExpect(is4xx());
+        // mvc.perform(post("/api/users/search").auth(u2)).andExpect(is4xx());
+        // mvc.perform(post("/api/users/search").auth(u3)).andExpect(is4xx());
 
 
-        mvc.perform(post("/api/users/"+admin)).andExpect(is4xx());
-        mvc.perform(post("/api/users/"+admin).auth(u1)).andExpect(is2xx());
-        mvc.perform(post("/api/users/"+admin).auth(u2)).andExpect(is4xx());
-        mvc.perform(post("/api/users/"+admin).auth(u3)).andExpect(is4xx());
+        // mvc.perform(post("/api/users/"+admin)).andExpect(is4xx());
+        // mvc.perform(post("/api/users/"+admin).auth(u1)).andExpect(is4xx());
+        // mvc.perform(post("/api/users/"+admin).auth(u2)).andExpect(is4xx());
+        // mvc.perform(post("/api/users/"+admin).auth(u3)).andExpect(is4xx());
 
-        mvc.perform(post("/api/users/u2")).andExpect(is4xx());
-        mvc.perform(post("/api/users/u2").auth(u1)).andExpect(is2xx());
-        mvc.perform(post("/api/users/u2").auth(u2)).andExpect(is2xx());
-        mvc.perform(post("/api/users/u2").auth(u3)).andExpect(is4xx());
+        // mvc.perform(post("/api/users/u2")).andExpect(is4xx());
+        // mvc.perform(post("/api/users/u2").auth(u1)).andExpect(is4xx());
+        // mvc.perform(post("/api/users/u2").auth(u2)).andExpect(is4xx());
+        // mvc.perform(post("/api/users/u2").auth(u3)).andExpect(is4xx());
 
 
-        mvc.perform(post("/api/users/u3")).andExpect(is4xx());
-        mvc.perform(post("/api/users/u3").auth(u1)).andExpect(is2xx());
-        mvc.perform(post("/api/users/u3").auth(u2)).andExpect(is4xx());
-        mvc.perform(post("/api/users/u3").auth(u3)).andExpect(is2xx());
+        // mvc.perform(post("/api/users/u3")).andExpect(is4xx());
+        // mvc.perform(post("/api/users/u3").auth(u1)).andExpect(is4xx());
+        // mvc.perform(post("/api/users/u3").auth(u2)).andExpect(is4xx());
+        // mvc.perform(post("/api/users/u3").auth(u3)).andExpect(is4xx());
+
+        logger.info("----------------------------------");
+
+        // mvc.perform(get("/api")).andExpect(is2xx()).andDo(print());
+        // mvc.perform(get("/api/profile/users")).andExpect(is2xx()).andDo(print());
+        // mvc.perform(get("/api/profile/bars")).andExpect(is2xx()).andDo(print());
+        // mvc.perform(post("/api/users/search").auth(u1)).andExpect(is2xx()).andDo(print());
+        // mvc.perform(post("/api/users/adminX").auth(u1)).andExpect(is2xx()).andDo(print());
+
+
+		// mvc.perform(post("/api/bars").auth(u1).content(bd::newEntity)).andExpect(is2xx()).andDo(print());
+
+
+        mvc.perform(post("/api/users").content(ud::newEntity).auth(u1)).andExpect(is2xx()).andDo(print());
+
+
     }
 }

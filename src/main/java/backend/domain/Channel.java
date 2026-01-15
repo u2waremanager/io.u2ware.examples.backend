@@ -1,7 +1,5 @@
 package backend.domain;
 
-import backend.domain.properties.AttributesMap;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -15,13 +13,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor @AllArgsConstructor
 public class Channel {
 
-    @Id
-    private Long timestamp;
 
+    @Id
     private String principal;
 
+    private Long timestamp;
 
-    @Column(length = 1024*100)
-    private AttributesMap payload;
-
+    private String state;
 }

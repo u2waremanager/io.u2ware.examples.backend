@@ -4,16 +4,22 @@
         </v-progress-circular>
     </v-container>
 
-
+    <pre>{{ oauth2 }}</pre>
+    <pre>{{ token }}</pre>
 </template>
 
 <script>
 const x = "[/accounts/logon]";
 import $accountsApi from "@/assets/apis/accounts";
+import $accountsStore from "@/assets/stores/accounts.js";
+
+import $commonStore from "@/assets/stores/common.js";
 
 export default {
 
   computed: {
+    oauth2: $commonStore.computed.oauth2,
+    token : $commonStore.computed.token,    
   },
 
 
@@ -38,7 +44,8 @@ export default {
             })
             .then((r) => {
                 console.log(x, "mounted()", 4, r);
-                if(r != undefined) this.$router.push("/contents");
+                $accountsStore.computed.userinfo.set(r);
+                this.$router.push("/contents");
             })
             .catch((r) => {
                 console.log(x, "mounted()", 5, r);

@@ -12,6 +12,7 @@ import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
 import org.springframework.stereotype.Component;
 
 import backend.api.ResponseStatusExceptions;
+import backend.domain.Channel;
 import backend.domain.User;
 import io.u2ware.common.data.rest.core.annotation.HandleAfterRead;
 import io.u2ware.common.data.rest.core.annotation.HandleBeforeRead;
@@ -24,30 +25,29 @@ public class ChannelHandler {
 
 
     @HandleBeforeCreate
-    public void HandleBeforeCreate(User e) throws Exception{
+    public void HandleBeforeCreate(Channel e) throws Exception{
         throw ResponseStatusExceptions.NOT_FOUND;
     }
 
     @HandleBeforeSave
-    public void HandleBeforeSave(User e)throws Exception{
+    public void HandleBeforeSave(Channel e)throws Exception{
         throw ResponseStatusExceptions.NOT_FOUND;
     }
 
     @HandleBeforeDelete
-    public void HandleBeforeDelete(User e)throws Exception{
+    public void HandleBeforeDelete(Channel e)throws Exception{
         throw ResponseStatusExceptions.NOT_FOUND;
     }
 
 
     @HandleAfterRead
-    public void HandleAfterRead(User e, Serializable r)throws Exception{
-        // logger.info("@HandleAfterRead : "+e);
-        // logger.info("@HandleAfterRead : "+r);
+    public void HandleAfterRead(Channel e, Serializable r)throws Exception{
+        throw ResponseStatusExceptions.NOT_FOUND;
     }
 
 
     @HandleBeforeRead
-    public void HandleBeforeRead(User e, Specification<User> r)throws Exception{
+    public void HandleBeforeRead(Channel e, Specification<User> r)throws Exception{
 
     }
 }

@@ -8,21 +8,11 @@
     </v-progress-circular>
 
     <v-row no-gutters v-for="provider in providers">
-      <v-col cols="12" v-if="hasTested">
-        <v-text-field
-          placeholder="Enter your username"
-          variant="outlined"
-          label="Username"
-          v-model="username"
-        ></v-text-field>
-      </v-col>
-
       <v-col cols="12" v-for="provider in providers">
         <v-btn
           variant="outlined"
           block
           size="x-large"
-          :disabled="!username"
           @click="login(provider.uri)"
         >
           {{ $t("accounts.login.provider", [provider.name]) }}
@@ -43,14 +33,7 @@ export default {
   }),
 
   computed: {
-    hasTested() {
-      for (let provider of this.providers) {
-        if (provider.name == "Test Oauth2") {
-          return true;
-        }
-      }
-      return false;
-    },
+
   },
 
   methods: {
@@ -92,7 +75,11 @@ export default {
       .then((r) => {
         console.log(x, "mounted()", 4);
         this.providers = r;
-      });
+      })
+      .catch((r) => {
+        console.log(x, "mounted()", 3);
+        this.$router.push("/");
+      })      
   },
 };
 </script>

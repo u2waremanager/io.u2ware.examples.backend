@@ -49,12 +49,12 @@
         # Table Cell Template Start
         //////////////////////////
         -->
-        <template v-slot:item.userId="{ item }">
+        <template v-slot:item.username="{ item }">
           <v-btn
-            :disabled="currentUser.userId == item.userId"
+            :disabled="userinfo.username == item.username"
             variant="plain"
             color="primary"
-            :text="item.userId"
+            :text="item.username"
             style="text-transform: none"
             @click="readAction(item)"
           ></v-btn>
@@ -85,7 +85,7 @@
           :subtitle="editForm.userId"
         >
           <v-card-text>
-            <v-form validate-on="eager" @update:model-value="formValidate">
+            <v-form validate-on="eager" @update:model-value="dialogValidate">
               <!-- 
               //////////////////////////
               # Edit Form Start
@@ -93,10 +93,10 @@
               -->
               <v-text-field
                 v-if="!isNew"
-                v-model="editForm.userId"
+                v-model="editForm.username"
                 :rules="[$rules.requried]"
-                label="userId"
-                placeholder="userId"
+                label="username"
+                placeholder="username"
                 disabled
                 hint="......."
                 variant="outlined"
@@ -166,11 +166,7 @@ export default {
     entitiesTotal: 0,
 
     config: {
-      ///////////////////////////////
-      // Config..
-      ///////////////////////////////
-      api: $contentsApi.users,
-
+      searchBy: "",
       itemsPerPageOptions: [
         { value: 10, title: "10" },
         { value: 20, title: "20" },
@@ -178,15 +174,19 @@ export default {
         { value: 100, title: "100" },
       ],
 
-      itemValue: "userId",
+      ///////////////////////////////
+      // Config Start
+      ///////////////////////////////
+      itemValue: "username",
 
       headers: [
-        { key: "userId", title: "userId", align: "start" },
+        { key: "username", title: "username", align: "start" },
         { key: "roles", title: "roles", align: "end" },
-        { key: "updated.timestamp", title: "updatedTimestamp", align: "end" },
+        // { key: "updated.timestamp", title: "updatedTimestamp", align: "end" },
       ],
-      sortBy: [{ key: "updated.timestamp", order: "desc" }],
-      searchBy: "",
+      sortBy: [
+        {key: "updated.timestamp", order: "desc" }
+      ],
 
       initForm: {
         
@@ -208,10 +208,39 @@ export default {
 
   computed: {
     subtitle: $contentsStore.computed.subtitle,
-    currentUser : $contentsStore.computed.currentUser,
+    userinfo : $contentsStore.computed.userinfo,
   },
 
   methods: {
+
+    ////////////////////////////////////////
+    // handle....
+    ////////////////////////////////////////
+    handleCreate(){
+      return $contentsApi.users.create(this.editForm);
+    },
+    handleRead(entity){
+      return $contentsApi.users.read(entity);
+    },
+    handleUpdate(){
+      return $contentsApi.users.update(this.editForm);
+    },
+    handleDelete(){
+      return $contentsApi.users.delete(this.editForm);
+    },
+    handleSearch(query){
+      return $contentsApi.users.search(this.searchForm, query);
+    },
+    handleEntities(res){
+      this.entitiesTotal = res.page.totalElements;
+      this.entities = res._embedded.users;
+      return res;
+    },
+    handleEntity(res){
+      this.editForm = res ? res : Object.assign({}, this.config.initForm);
+      return res;
+    },
+
     ////////////////////////////////////////
     //
     ////////////////////////////////////////
@@ -225,7 +254,13 @@ export default {
       this.isNew = false;
       return "closed";
     },
+    dialogValidate(r){
+      this.validate = r;
+    },
 
+    ////////////////////////////////////////
+    //
+    ////////////////////////////////////////
     confirmBefore(code) {
       let msg = this.$t(`$dialog.before.${code}`);
       return this.$dialog.confirm(msg);
@@ -239,6 +274,9 @@ export default {
       return this.$dialog.alert(msg, code);
     },
 
+    ////////////////////////////////////////
+    //
+    ////////////////////////////////////////    
     actionStart(loading) {
       this.loading = true == loading ? true : false;
       return Promise.resolve();
@@ -252,14 +290,6 @@ export default {
       }
     },
 
-    formValidate(r) {
-      this.validate = r;
-    },
-    formReset(r) {
-      this.editForm = r ? r : Object.assign({}, this.config.initForm);
-      return r;
-    },
-
     ////////////////////////////////////////
     //
     ////////////////////////////////////////
@@ -270,12 +300,10 @@ export default {
     searchAction(params) {
       this.actionStart(true)
         .then((r) => {
-          return this.config.api.search(this.searchForm, params);
+          return this.handleSearch(params);
         })
         .then((r) => {
-          this.entitiesTotal = r.entitiesTotal;
-          this.entities = r.entities;
-          return r;
+          return this.handleEntities(r);
         })
         .then((r) => {
           return this.actionEnd(false);
@@ -291,7 +319,7 @@ export default {
     newAction() {
       this.actionStart(true)
         .then((r) => {
-          return this.formReset();
+          return this.handleEntity();
         })
         .then((r) => {
           return this.dialogOpen(true);
@@ -307,7 +335,7 @@ export default {
           return this.dialogClose();
         })
         .then((r) => {
-          return this.formReset();
+          return this.handleEntity();
         })
         .then((r) => {
           return this.actionEnd(false);
@@ -320,13 +348,13 @@ export default {
           return this.actionStart(true);
         })
         .then((r) => {
-          return this.config.api.create(this.editForm);
+          return this.handleCreate();
         })
         .then((r) => {
           return this.confirmAfter("create");
         })
         .then((r) => {
-          return this.formReset();
+          return this.handleEntity();
         })
         .then((r) => {
           return this.actionEnd(true);
@@ -342,10 +370,10 @@ export default {
     readAction(entity) {
       this.actionStart(true)
         .then((r) => {
-          return this.config.api.read(entity);
+          return this.handleRead(entity);
         })
         .then((r) => {
-          return this.formReset(r);
+          return this.handleEntity(r);
         })
         .then((e) => {
           return this.dialogOpen(false);
@@ -367,18 +395,23 @@ export default {
           return this.actionStart(true);
         })
         .then((r) => {
-          return this.config.api.update(this.editForm);
+          console.log(0, this.editForm);
+          return this.handleUpdate();
         })
         .then((r) => {
+          console.log(1);
           return this.confirmAfter("update");
         })
         .then((r) => {
-          return this.formReset();
+          console.log(2);
+          return this.handleEntity();
         })
         .then((r) => {
+          console.log(3);
           return this.actionEnd(true);
         })
         .catch((r) => {
+          console.log(4);
           return this.confirmError(r);
         })
         .catch((r) => {
@@ -392,13 +425,13 @@ export default {
           return this.actionStart(true);
         })
         .then((r) => {
-          return this.config.api.delete(this.editForm);
+          return this.handleDelete();
         })
         .then((r) => {
           return this.confirmAfter("delete");
         })
         .then((r) => {
-          return this.formReset();
+          return this.handleEntity();
         })
         .then((r) => {
           return this.actionEnd(true);

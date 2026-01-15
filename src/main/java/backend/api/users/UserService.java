@@ -3,6 +3,7 @@ package backend.api.users;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -20,6 +21,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 
 import backend.domain.User;
+import backend.domain.properties.AttributesSet;
 import io.u2ware.common.oauth2.jwt.AuthenticationContext;
 import io.u2ware.common.oauth2.jwt.OAuth2ResourceServerUserinfoService;
 
@@ -42,27 +44,33 @@ public class UserService implements Converter<Jwt, Collection<GrantedAuthority>>
         logger.info("convert ");
         Collection<GrantedAuthority> authorities = AuthenticationContext.authorities(jwt);
         logger.info("authorities By jwt:    "+authorities);
+        logger.info("authorities By jwt:    "+jwt.getSubject());
 
 
         userRepository.findById(jwt.getSubject()).ifPresentOrElse((u)->{
 
-            Collection<GrantedAuthority> domainAuthorities = u.getAuthorities();
-            logger.info("authorities By domain: "+domainAuthorities);
-            authorities.addAll(domainAuthorities);
-    
+            AttributesSet roles = u.getRoles();
+            logger.info("roles1: "+roles);
+
+            Collection<GrantedAuthority> addAll = u.getAuthorities(roles);
+            authorities.addAll(addAll);
+   
         }, ()->{
-            Collection<GrantedAuthority> domainAuthorities = Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
-            logger.info("authorities By domain: "+domainAuthorities);
-            authorities.addAll(domainAuthorities);
+            AttributesSet roles = new AttributesSet("ROLE_USER");
+            logger.info("roles2: "+roles);
+
+            Collection<GrantedAuthority> addAll = User.getAuthorities(roles);
+            authorities.addAll(addAll);
 
             //
             User u = new User();
             u.setUsername(jwt.getSubject());
-            u.setAuthorities(domainAuthorities);
+            u.setRoles(roles);
             //For Auditing...
             // SecurityContextHolder.getContext().setAuthentication(new JwtAuthenticationToken(jwt));
             userRepository.save(u);
             //
+
         });
 
         logger.info("authorities result : "+authorities);
@@ -92,7 +100,7 @@ public class UserService implements Converter<Jwt, Collection<GrantedAuthority>>
         User u = new User();
         u.setUsername(rootUser);
         u.setPassword(rootPassword);
-        u.setAuthorities(Arrays.asList(new SimpleGrantedAuthority("ROLE_ADMIN")));
+        u.setRoles(new AttributesSet("ROLE_ADMIN"));
 
         return userRepository.findById(username).map(r->r).orElse(userRepository.save(u));
     }

@@ -1,6 +1,7 @@
 package backend.api.users;
 
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,6 +16,9 @@ public class UserDocs extends MockMvcRestDocs {
 
     public Map<String,Object> newEntity(){
         Map<String,Object> r = new HashMap<>();
+        r.put("username", randomText("User"));
+        // r.put("password", "aaa")
+        // r.put("roles", Arrays.asList("ROLE_ADMIN"));
         return r;
     }
 

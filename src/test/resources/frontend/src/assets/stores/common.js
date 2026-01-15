@@ -37,20 +37,32 @@ export default {
   /////////////////////
   // 
   /////////////////////
-  persistedstate: false,
+  persistedstate: true,
+
 
   /////////////////////
   // 
   /////////////////////
   computed: {
 
-    userinfo : {
+    oauth2: {
       get: () => {
-        return $store.getters["accounts/root"].userinfo;
+        return $store.getters["common/root"].oauth2;
       },
       set: (val) => {
-        $store.commit("accounts/root", { userinfo: val });
-      },      
-    }
+        $store.commit("common/root", { oauth2: val });
+      },
+    },
+
+    token: {
+      get: () => {
+        return $store.getters["common/root"].token;
+      },
+      set: (val) => {
+        $store.commit("common/root", { token: val });
+      },
+    },
+
+
   },
 };

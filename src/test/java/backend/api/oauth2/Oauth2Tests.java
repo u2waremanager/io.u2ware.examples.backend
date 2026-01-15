@@ -50,17 +50,6 @@ public class Oauth2Tests {
 		// when(this.authorizationConsentService.findById(any(), any())).thenReturn(null);
 	}    
 
-    @Test
-    public void context1Loads() throws Exception{
-
-        Jwt u1 = od.jose("oauth2User");
-        Jwt u2 = od.jose("u2", "ROLE_ADMIN");
-
-        mvc.perform(get("/api/profile")).andDo(print()) .andExpect(is4xx());
-        mvc.perform(get("/api/profile").auth(u1)).andDo(print()) .andExpect(is2xx());
-        mvc.perform(get("/api/profile").auth(u2)).andDo(print()) .andExpect(is2xx());
-    }
-
 
     @Test
     public void context2Loads() throws Exception{

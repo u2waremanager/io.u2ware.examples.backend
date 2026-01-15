@@ -35,7 +35,7 @@
         <v-list-item to="/contents/foos"> Foos</v-list-item>
         <v-list-item to="/contents/bars"> Bars </v-list-item>
         <v-list-item to="/contents/items"> Items </v-list-item>
-        <v-list-item v-if="isAdmin" to="/contents/channels"> Channels </v-list-item>
+        <!-- <v-list-item v-if="isAdmin" to="/contents/channels"> Channels </v-list-item> -->
         <v-list-item v-if="isAdmin" to="/contents/users"> Users </v-list-item>
       </v-list>
     </v-navigation-drawer>
@@ -62,7 +62,7 @@ export default {
 
   computed: {
     subtitle: $contentsState.computed.subtitle,
-    currentUser : $contentsState.computed.currentUser,
+    userinfo : $contentsState.computed.userinfo,
   },
 
   methods: {
@@ -89,16 +89,22 @@ export default {
   mounted() {
 
     $contentsApi.oauth2
-      .permission(["ROLE_ADMIN"])
+      .userinfo("ROLE_ADMIN")
       .then((r) => {
         console.log(x, "mounted()", 1, r);
-        this.username = r.userId;
+        $contentsState.computed.userinfo.set(r);
+        this.username = r.username;
         this.isAdmin = true;
       })
       .catch((r) => {
         console.log(x, "mounted()", 222, r);
-        this.username = r.userId;
-        this.isAdmin = false;
+        if(r.username == undefined) {
+          this.$router.push(`/`);
+        }else{
+          $contentsState.computed.userinfo.set(r);
+          this.username = r.username;
+          this.isAdmin = false;
+        }
       });
   },
 };

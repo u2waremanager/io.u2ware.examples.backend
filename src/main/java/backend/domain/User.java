@@ -1,10 +1,16 @@
 package backend.domain;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.stream.Collectors;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.jackson2.SecurityJackson2Modules;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import backend.domain.auditing.AuditedEntity;
@@ -24,14 +30,45 @@ public class User extends AuditedEntity implements UserDetails{
     @Id
     private String username;
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private AttributesSet roles;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
-    private Collection<GrantedAuthority> authorities;
 
-    private AttributesSet roles = new AttributesSet();
+    @Transient @JsonIgnore 
+    public Collection<GrantedAuthority> getAuthorities() {
+        return getAuthorities(roles);
+    }
 
-    @Transient
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Transient @JsonIgnore 
+    public static Collection<GrantedAuthority> getAuthorities(AttributesSet roles) {
+        if(roles == null) return Collections.emptyList();
+        return roles.stream().map(r -> new SimpleGrantedAuthority(r.toString())).collect(Collectors.toList());
+    }    
+
+    @Transient @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String searchKeyword;
+
+
+    @Transient @JsonIgnore 
+   public boolean isAccountNonExpired() {
+      return true;
+   }
+
+    @Transient @JsonIgnore 
+   public boolean isAccountNonLocked() {
+      return true;
+   }
+
+    @Transient @JsonIgnore 
+   public boolean isCredentialsNonExpired() {
+      return true;
+   }
+
+    @Transient @JsonIgnore 
+   public boolean isEnabled() {
+      return true;
+   }
+
 }
