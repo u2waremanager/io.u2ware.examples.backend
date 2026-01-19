@@ -67,10 +67,18 @@ const $contentsApi = {
         url: $contentsApi.api.url(e, "/oauth2/userinfo"),
         headers: $contentsApi.api.headers(e, {}),        
       })).then(r => {
-        if(role == undefined) return r;        
-        let idx = r.roles.findIndex(e=>{
-          return e == role;
-        });
+        if(role == undefined) return r;       
+        
+        console.log(1, r);
+
+        let roles = (r.roles != undefined) ? r.roles : r.claims.authorities;
+        let username = r.username != undefined ? r.username : r.claims.sub;
+        r["username"] = username;
+
+        let idx = roles.findIndex(e=>{
+            return e == role;
+          });
+
         if(idx > -1) {
           return r;
         }else{
@@ -265,6 +273,10 @@ const $contentsApi = {
     },
   },
 
+
+  /////////////////////////////////////
+  //
+  /////////////////////////////////////  
   sessions: {
     search(data, params) {
       return $contentsApi.api
@@ -278,6 +290,51 @@ const $contentsApi = {
     },
   },
 
+  /////////////////////////////////////
+  //
+  /////////////////////////////////////
+  tokens: {
+    search(data, params) {
+      return $contentsApi.api
+        .execute((e) => ({
+          method: "POST",
+          url: $contentsApi.api.url(e, "/api/tokens/search"),
+          headers: $contentsApi.api.headers(e, {}),
+          params: $contentsApi.api.pageable(params),
+          data: data,
+        }));
+    },
+    create(data) {
+      return $contentsApi.api.execute((e) => ({
+        method: "POST",
+        url: $contentsApi.api.url(e, "/api/tokens"),
+        headers: $contentsApi.api.headers(e, {}),
+        data: data,
+      }));
+    },
+    read(data) {
+      return $contentsApi.api.execute((e) => ({
+        method: "POST",
+        url: $contentsApi.api.url(e, data),
+        headers: $contentsApi.api.headers(e, {}),
+      }));
+    },
+    update(data) {
+      return $contentsApi.api.execute((e) => ({
+        method: "PUT",
+        url: $contentsApi.api.url(e, data),
+        headers: $contentsApi.api.headers(e, {}),
+        data: data,
+      }));
+    },
+    delete(data) {
+      return $contentsApi.api.execute((e) => ({
+        method: "DELETE",
+        url: $contentsApi.api.url(e, data),
+        headers: $contentsApi.api.headers(e, {}),
+      }));
+    },
+  },
 
 };
 

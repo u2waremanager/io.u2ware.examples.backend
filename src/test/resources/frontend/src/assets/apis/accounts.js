@@ -31,8 +31,12 @@ const $accountsApi = {
     },    
 
     token(env){
+
+      console.log("token", 1, env);
+
       let t = env["VITE_API_TOKEN"];
       let token = t == undefined ? $commonStore.computed.token.get() : t;
+      console.log("token", 2, token);
       return token;
     },    
 
@@ -95,7 +99,7 @@ const $accountsApi = {
     logout() {
       return $accountsApi.api.execute((e) => ({
         url: $accountsApi.api.url(e, "/oauth2/logout") ,
-        headers: $accountsApi.api.headers(),
+        headers: $accountsApi.api.headers(e, {}),
       }))
       .finally((r) => {
         $commonStore.computed.oauth2.set(undefined);

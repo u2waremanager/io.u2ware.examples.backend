@@ -9,14 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Component;
 
+import backend.api.tokens.TokenRepository;
+import backend.domain.Token;
 import backend.domain.User;
 import backend.domain.properties.AttributesSet;
 import io.u2ware.common.oauth2.jwt.AuthenticationContext;
@@ -32,6 +32,7 @@ public class UserService implements Converter<Jwt, Collection<GrantedAuthority>>
    
     protected @Autowired SecurityProperties securityProperties;
     protected @Autowired UserRepository userRepository;
+    protected @Autowired TokenRepository tokenRepository;
     protected @Autowired(required = false) PasswordEncoder passwordEncoder;
 
 
@@ -43,6 +44,18 @@ public class UserService implements Converter<Jwt, Collection<GrantedAuthority>>
         logger.info("authorities By jwt:    "+authorities);
         logger.info("authorities By jwt:    "+jwt.getSubject());
 
+
+        tokenRepository.findById(jwt.getTokenValue()).ifPresentOrElse((t)->{
+            t.setTimestamp(System.currentTimeMillis());
+            tokenRepository.save(t);
+        }, ()->{
+            Token t = new Token();
+            t.setTokenValue(jwt.getTokenValue());
+            t.setSubject(jwt.getSubject());            
+            t.setTimestamp(System.currentTimeMillis());
+            tokenRepository.save(t);
+        });
+        
 
         userRepository.findById(jwt.getSubject()).ifPresentOrElse((u)->{
 
@@ -59,16 +72,25 @@ public class UserService implements Converter<Jwt, Collection<GrantedAuthority>>
             Collection<GrantedAuthority> addAll = User.getAuthorities(roles);
             authorities.addAll(addAll);
 
-            //
-            User u = new User();
-            u.setUsername(jwt.getSubject());
-            u.setRoles(roles);
-            //For Auditing...
-            SecurityContextHolder.getContext().setAuthentication(new JwtAuthenticationToken(jwt));
-            userRepository.save(u);
-            //
-
+            // //
+            // User u = new User();
+            // u.setUsername(jwt.getSubject());
+            // u.setRoles(roles);
+            // String rootUser = this.securityProperties.getUser().getName();
+            // if(rootUser.equals(jwt.getSubject())) {
+            // }
+            // //For Auditing...
+            // SecurityContextHolder.getContext().setAuthentication(new JwtAuthenticationToken(jwt));
+            // userRepository.save(u);
+            // //
         });
+
+
+
+
+
+
+
 
         logger.info("authorities result : "+authorities);
         return authorities;
@@ -77,11 +99,12 @@ public class UserService implements Converter<Jwt, Collection<GrantedAuthority>>
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        logger.info("loadUserByUsername1111: "+username);
+        logger.info("loadUserByUsername 1: "+username);
 
         Optional<User> user = userRepository.findById(username);
         if(user.isPresent()) return user.get();
 
+        logger.info("loadUserByUsername 2: "+username);
 
         String rootUser = this.securityProperties.getUser().getName();
         if(! rootUser.equals(username)) {
@@ -89,9 +112,10 @@ public class UserService implements Converter<Jwt, Collection<GrantedAuthority>>
         }
 
         String password = this.securityProperties.getUser().getPassword();
+        logger.info("loadUserByUsername 3: "+password);
+        logger.info("loadUserByUsername 4: "+passwordEncoder);
         String rootPassword = passwordEncoder != null ? passwordEncoder.encode(password) : "{noop}"+password;
-        logger.info("loadUserByUsername1111: "+passwordEncoder);
-        logger.info("loadUserByUsername1111: "+rootPassword);
+        logger.info("loadUserByUsername 5: "+rootPassword);
 
 
         User u = new User();

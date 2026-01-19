@@ -10,6 +10,7 @@ import org.springframework.data.rest.core.annotation.HandleBeforeDelete;
 import org.springframework.data.rest.core.annotation.HandleBeforeSave;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import backend.api.ResponseStatusExceptions;
 import backend.domain.User;
@@ -32,6 +33,9 @@ public class UserHandler {
         if(AuditedAuditor.hasNotPermission("ROLE_ADMIN")) {
             throw ResponseStatusExceptions.UNAUTHORIZED;
         }
+
+        if(! StringUtils.startsWithIgnoreCase(e.getPassword(), "{noop}"))
+            e.setPassword("{noop}"+e.getPassword());
     }
 
     @HandleBeforeSave
@@ -42,6 +46,8 @@ public class UserHandler {
         if(AuditedAuditor.hasNotPermission("ROLE_ADMIN")) {
             throw ResponseStatusExceptions.UNAUTHORIZED;
         }
+        if(! StringUtils.startsWithIgnoreCase(e.getPassword(), "{noop}"))
+            e.setPassword("{noop}"+e.getPassword());
     }
 
     @HandleBeforeDelete

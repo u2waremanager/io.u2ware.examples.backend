@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 import backend.api.ResponseStatusExceptions;
 import backend.domain.Session;
 import backend.domain.User;
-import backend.domain.auditing.AuditedAuditor;
 import io.u2ware.common.data.rest.core.annotation.HandleAfterRead;
 import io.u2ware.common.data.rest.core.annotation.HandleBeforeRead;
 
@@ -50,9 +49,9 @@ public class SessionHandler {
     @HandleBeforeRead
     public void HandleBeforeRead(Session e, Specification<User> r)throws Exception{
         logger.info("@HandleBeforeRead : "+e);
-        if(AuditedAuditor.hasNotPermission("ROLE_ADMIN")) {
-            throw ResponseStatusExceptions.UNAUTHORIZED;
-        }
+        // if(AuditedAuditor.hasNotPermission("ROLE_ADMIN")) {
+        //     throw ResponseStatusExceptions.UNAUTHORIZED;
+        // }
 
 
     }

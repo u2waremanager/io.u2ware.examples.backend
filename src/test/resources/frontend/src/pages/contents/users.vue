@@ -74,6 +74,17 @@
             <v-icon>mdi-refresh</v-icon>
           </v-btn>
 
+
+          <v-btn
+            class="ms-1"
+            text
+            variant="elevated"
+            color="primary"
+            @click="newAction"
+          >
+            <v-icon>mdi-plus</v-icon>
+          </v-btn>
+
           <v-spacer></v-spacer>
         </template>
       </v-data-table-server>
@@ -92,15 +103,24 @@
               //////////////////////////
               -->
               <v-text-field
-                v-if="!isNew"
                 v-model="editForm.username"
                 :rules="[$rules.requried]"
                 label="username"
                 placeholder="username"
-                disabled
+                :disabled="!isNew"
                 hint="......."
                 variant="outlined"
               ></v-text-field>
+
+              <v-text-field
+                v-model="editForm.password"
+                :rules="[$rules.requried]"
+                label="new password"
+                placeholder="new password"
+                hint="......."
+                variant="outlined"
+              ></v-text-field>
+
 
               <v-select
                 v-model="editForm.roles"

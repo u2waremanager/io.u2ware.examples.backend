@@ -51,11 +51,14 @@
         "items" : {
             "title" : "Items"
         },
+        "sessions" : {
+            "title" : "Sessions"
+        },
         "users" : {
             "title" : "Users"
         },
-        "channels" : {
-            "title" : "Channels"
+        "tokens" : {
+            "title" : "Tokens"
         }
     },
 
