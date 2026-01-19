@@ -8,7 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "examples_channels")
+@Table(name = "examples_sessions")
 @Data
 @NoArgsConstructor @AllArgsConstructor
 public class Session {

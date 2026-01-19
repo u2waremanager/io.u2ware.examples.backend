@@ -227,16 +227,18 @@ export default {
           return this.handleSearch(params);
         })
         .then((r) => {
+          console.log(1, r);
           return this.handleEntities(r);
         })
         .then((r) => {
           return this.actionEnd(false);
         })
         .catch((e) => {
+          console.log(2, e);
           return this.confirmError(e);
         })
         .catch((e) => {
-          this.$router.push("/");
+          // this.$router.push("/");
         });
     },
 
