@@ -31,7 +31,7 @@ class ApplicationTests {
 						MockMvcRequestBuilders.get("/api")
 				)
 				.andExpect(
-						MockMvcResultMatchers.status().is4xxClientError()
+						MockMvcResultMatchers.status().is2xxSuccessful()
 				)
 				.andDo(
 						MockMvcResultHandlers.print(System.err)

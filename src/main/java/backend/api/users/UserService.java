@@ -7,6 +7,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,7 +34,7 @@ public class UserService implements Converter<Jwt, Collection<GrantedAuthority>>
     protected @Autowired SecurityProperties securityProperties;
     protected @Autowired UserRepository userRepository;
     protected @Autowired TokenRepository tokenRepository;
-    protected @Autowired(required = false) PasswordEncoder passwordEncoder;
+    protected @Autowired @Lazy PasswordEncoder passwordEncoder; //oops!!!!
 
 
     @Override

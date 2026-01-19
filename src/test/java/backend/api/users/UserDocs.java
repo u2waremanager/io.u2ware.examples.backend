@@ -13,18 +13,18 @@ import io.u2ware.common.docs.MockMvcRestDocs;
 public class UserDocs extends MockMvcRestDocs {
 
 
-    public Map<String,Object> newEntity(){
+    public Map<String,Object> newEntity(String username){
         Map<String,Object> r = new HashMap<>();
-        r.put("username", randomText("User"));
+        r.put("username", username);
         // r.put("password", "aaa")
         // r.put("roles", Arrays.asList("ROLE_ADMIN"));
         return r;
     }
 
 
-    public Map<String,Object> modifyEntity(String userId){
-        Map<String,Object> r = context(userId);
-        // r.put("userTimestamp", System.currentTimeMillis());
+    public Map<String,Object> resetEntity(){
+        Map<String,Object> r = new HashMap<>();
+        r.put("password", randomText("Password"));
         return r;
     }
 
