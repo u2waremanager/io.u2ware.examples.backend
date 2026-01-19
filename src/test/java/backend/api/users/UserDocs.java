@@ -25,11 +25,9 @@ public class UserDocs extends MockMvcRestDocs {
 
     public Map<String,Object> modifyEntity(String userId){
         Map<String,Object> r = context(userId);
-        r.put("userTimestamp", System.currentTimeMillis());
+        // r.put("userTimestamp", System.currentTimeMillis());
         return r;
     }
-
-    
 
 
 

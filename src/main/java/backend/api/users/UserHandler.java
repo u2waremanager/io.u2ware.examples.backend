@@ -56,9 +56,12 @@ public class UserHandler {
     @HandleAfterRead
     public void HandleAfterRead(User e, Serializable r)throws Exception{
         logger.info("@HandleAfterRead : "+e);
-        if(AuditedAuditor.hasNotPermission(e.getInserted(), "ROLE_ADMIN")) {
+
+        if(! AuditedAuditor.isOwner(e.getInserted()) && AuditedAuditor.hasNotPermission(e.getInserted(), "ROLE_ADMIN")) {
             throw ResponseStatusExceptions.UNAUTHORIZED;
         }
+
+
     }
 
 

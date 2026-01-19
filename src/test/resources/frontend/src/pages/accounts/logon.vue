@@ -4,8 +4,8 @@
         </v-progress-circular>
     </v-container>
 
-    <pre>{{ oauth2 }}</pre>
-    <pre>{{ token }}</pre>
+    <!-- <pre>{{ oauth2 }}</pre>
+    <pre>{{ token }}</pre> -->
 </template>
 
 <script>

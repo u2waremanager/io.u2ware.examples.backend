@@ -53,38 +53,29 @@ public class UserTest {
         Jwt u3 = od.jose("u3");
         
 
-        // mvc.perform(post("/api/users/search")).andExpect(is4xx());
-        // mvc.perform(post("/api/users/search").auth(u1)).andExpect(is4xx());
-        // mvc.perform(post("/api/users/search").auth(u2)).andExpect(is4xx());
-        // mvc.perform(post("/api/users/search").auth(u3)).andExpect(is4xx());
+        mvc.perform(post("/api/users/search")).andExpect(is4xx());
+        mvc.perform(post("/api/users/search").auth(u1)).andExpect(is2xx());
+        mvc.perform(post("/api/users/search").auth(u2)).andExpect(is4xx());
+        mvc.perform(post("/api/users/search").auth(u3)).andExpect(is4xx());
 
 
-        // mvc.perform(post("/api/users/"+admin)).andExpect(is4xx());
-        // mvc.perform(post("/api/users/"+admin).auth(u1)).andExpect(is4xx());
-        // mvc.perform(post("/api/users/"+admin).auth(u2)).andExpect(is4xx());
-        // mvc.perform(post("/api/users/"+admin).auth(u3)).andExpect(is4xx());
+        mvc.perform(post("/api/users/adminX")).andExpect(is4xx());
+        mvc.perform(post("/api/users/adminX").auth(u1)).andExpect(is2xx());
+        mvc.perform(post("/api/users/adminX").auth(u2)).andExpect(is4xx());
+        mvc.perform(post("/api/users/adminX").auth(u3)).andExpect(is4xx());
 
-        // mvc.perform(post("/api/users/u2")).andExpect(is4xx());
-        // mvc.perform(post("/api/users/u2").auth(u1)).andExpect(is4xx());
-        // mvc.perform(post("/api/users/u2").auth(u2)).andExpect(is4xx());
-        // mvc.perform(post("/api/users/u2").auth(u3)).andExpect(is4xx());
+        mvc.perform(post("/api/users/u2")).andExpect(is4xx());
+        mvc.perform(post("/api/users/u2").auth(u1)).andExpect(is2xx());
+        mvc.perform(post("/api/users/u2").auth(u2)).andExpect(is2xx());
+        mvc.perform(post("/api/users/u2").auth(u3)).andExpect(is4xx());
 
 
-        // mvc.perform(post("/api/users/u3")).andExpect(is4xx());
-        // mvc.perform(post("/api/users/u3").auth(u1)).andExpect(is4xx());
-        // mvc.perform(post("/api/users/u3").auth(u2)).andExpect(is4xx());
-        // mvc.perform(post("/api/users/u3").auth(u3)).andExpect(is4xx());
+        mvc.perform(post("/api/users/u3")).andExpect(is4xx());
+        mvc.perform(post("/api/users/u3").auth(u1)).andExpect(is2xx());
+        mvc.perform(post("/api/users/u3").auth(u2)).andExpect(is4xx());
+        mvc.perform(post("/api/users/u3").auth(u3)).andExpect(is2xx());
 
         logger.info("----------------------------------");
-
-        // mvc.perform(get("/api")).andExpect(is2xx()).andDo(print());
-        // mvc.perform(get("/api/profile/users")).andExpect(is2xx()).andDo(print());
-        // mvc.perform(get("/api/profile/bars")).andExpect(is2xx()).andDo(print());
-        // mvc.perform(post("/api/users/search").auth(u1)).andExpect(is2xx()).andDo(print());
-        // mvc.perform(post("/api/users/adminX").auth(u1)).andExpect(is2xx()).andDo(print());
-
-
-		// mvc.perform(post("/api/bars").auth(u1).content(bd::newEntity)).andExpect(is2xx()).andDo(print());
 
 
         mvc.perform(post("/api/users").content(ud::newEntity).auth(u1)).andExpect(is2xx()).andDo(print());

@@ -9,10 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Component;
 
 import backend.domain.User;
@@ -62,7 +64,7 @@ public class UserService implements Converter<Jwt, Collection<GrantedAuthority>>
             u.setUsername(jwt.getSubject());
             u.setRoles(roles);
             //For Auditing...
-            // SecurityContextHolder.getContext().setAuthentication(new JwtAuthenticationToken(jwt));
+            SecurityContextHolder.getContext().setAuthentication(new JwtAuthenticationToken(jwt));
             userRepository.save(u);
             //
 
