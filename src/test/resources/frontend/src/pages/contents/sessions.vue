@@ -76,7 +76,7 @@
 
 <script>
 const x = "[/contents/sessions]";
-import $contentsApi from "@/assets/apis/contents.js";
+import $restServer from "@/assets/apis/rest-server.js";
 import $contentsStore from "@/assets/stores/contents.js";
 
 export default {
@@ -140,19 +140,19 @@ export default {
     // handle....
     ////////////////////////////////////////
     handleCreate(){
-      return $contentsApi.sessions.create(this.editForm);
+      return $restServer.sessions.create(this.editForm);
     },
     handleRead(entity){
-      return $contentsApi.sessions.read(entity);
+      return $restServer.sessions.read(entity);
     },
     handleUpdate(){
-      return $contentsApi.sessions.update(this.editForm);
+      return $restServer.sessions.update(this.editForm);
     },
     handleDelete(){
-      return $contentsApi.sessions.delete(this.editForm);
+      return $restServer.sessions.delete(this.editForm);
     },
     handleSearch(query){
-      return $contentsApi.sessions.search(this.searchForm, query);
+      return $restServer.sessions.search(this.searchForm, query);
     },
     handleEntities(res){
       this.entitiesTotal = res.page.totalElements;

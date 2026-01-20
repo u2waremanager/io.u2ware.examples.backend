@@ -220,7 +220,7 @@
 
 <script>
 const x = "[/contents/foos]";
-import $contentsApi from "@/assets/apis/contents.js";
+import $restServer from "@/assets/apis/rest-server.js";
 import $contentsStore from "@/assets/stores/contents.js";
 
 export default {
@@ -306,7 +306,7 @@ export default {
       console.log(x, "fooItemsQuery", 1, v);
       this.fooItemsLoading = true;
       
-      $contentsApi.foos.search({}, {})
+      $restServer.foos.search({}, {})
       .then(r=>{
         console.log(x, "fooItemsQuery", 2, r);
         this.fooItems = r._embedded.foos;
@@ -321,7 +321,7 @@ export default {
       console.log(x, "barItemsQuery", 1, v);
       this.barItemsLoading = true;
       
-      $contentsApi.bars.search({}, {})
+      $restServer.bars.search({}, {})
       .then(r=>{
         console.log(x, "barItemsQuery", 2, r);
         this.barItems = r._embedded.bars;
@@ -336,19 +336,19 @@ export default {
     // handle....
     ////////////////////////////////////////
     handleCreate(){
-      return $contentsApi.items.create(this.editForm);
+      return $restServer.items.create(this.editForm);
     },
     handleRead(entity){
-      return $contentsApi.items.read(entity);
+      return $restServer.items.read(entity);
     },
     handleUpdate(){
-      return $contentsApi.items.update(this.editForm);
+      return $restServer.items.update(this.editForm);
     },
     handleDelete(){
-      return $contentsApi.items.delete(this.editForm);
+      return $restServer.items.delete(this.editForm);
     },
     handleSearch(query){
-      return $contentsApi.items.search(this.searchForm, query);
+      return $restServer.items.search(this.searchForm, query);
     },
     handleEntities(res){
       this.entitiesTotal = res.page.totalElements;

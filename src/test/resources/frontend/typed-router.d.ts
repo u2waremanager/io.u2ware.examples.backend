@@ -20,7 +20,8 @@ declare module 'vue-router/auto-routes' {
   export interface RouteNamedMap {
     '/': RouteRecordInfo<'/', '/', Record<never, never>, Record<never, never>>,
     '/[...path]': RouteRecordInfo<'/[...path]', '/:path(.*)', { path: ParamValue<true> }, { path: ParamValue<false> }>,
-    '/accounts': RouteRecordInfo<'/accounts', '/accounts', Record<never, never>, Record<never, never>, '/accounts/login' | '/accounts/logoff' | '/accounts/logon' | '/accounts/logout'>,
+    '/accounts': RouteRecordInfo<'/accounts', '/accounts', Record<never, never>, Record<never, never>, '/accounts/' | '/accounts/login' | '/accounts/logoff' | '/accounts/logon' | '/accounts/logout'>,
+    '/accounts/': RouteRecordInfo<'/accounts/', '/accounts', Record<never, never>, Record<never, never>>,
     '/accounts/login': RouteRecordInfo<'/accounts/login', '/accounts/login', Record<never, never>, Record<never, never>>,
     '/accounts/logoff': RouteRecordInfo<'/accounts/logoff', '/accounts/logoff', Record<never, never>, Record<never, never>>,
     '/accounts/logon': RouteRecordInfo<'/accounts/logon', '/accounts/logon', Record<never, never>, Record<never, never>>,
@@ -73,8 +74,12 @@ declare module 'vue-router/auto-routes' {
       views: never
     }
     'src/pages/accounts.vue': {
-      routes: '/accounts' | '/accounts/login' | '/accounts/logoff' | '/accounts/logon' | '/accounts/logout'
+      routes: '/accounts' | '/accounts/' | '/accounts/login' | '/accounts/logoff' | '/accounts/logon' | '/accounts/logout'
       views: 'default'
+    }
+    'src/pages/accounts/index.vue': {
+      routes: '/accounts/'
+      views: never
     }
     'src/pages/accounts/login.vue': {
       routes: '/accounts/login'

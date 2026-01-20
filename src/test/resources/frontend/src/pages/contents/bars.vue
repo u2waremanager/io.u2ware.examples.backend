@@ -160,7 +160,7 @@
 
 <script>
 const x = "[/contents/bars]";
-import $contentsApi from "@/assets/apis/contents.js";
+import $restServer from "@/assets/apis/rest-server.js";
 import $contentsStore from "@/assets/stores/contents.js";
 
 export default {
@@ -229,19 +229,19 @@ export default {
     // handle....
     ////////////////////////////////////////
     handleCreate(){
-      return $contentsApi.bars.create(this.editForm);
+      return $restServer.bars.create(this.editForm);
     },
     handleRead(entity){
-      return $contentsApi.bars.read(entity);
+      return $restServer.bars.read(entity);
     },
     handleUpdate(){
-      return $contentsApi.bars.update(this.editForm);
+      return $restServer.bars.update(this.editForm);
     },
     handleDelete(){
-      return $contentsApi.bars.delete(this.editForm);
+      return $restServer.bars.delete(this.editForm);
     },
     handleSearch(query){
-      return $contentsApi.bars.search(this.searchForm, query);
+      return $restServer.bars.search(this.searchForm, query);
     },
     handleEntities(res){
       this.entitiesTotal = res.page.totalElements;

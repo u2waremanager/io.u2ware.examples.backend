@@ -19,17 +19,19 @@
         </v-btn>
       </v-col>
     </v-row>
+    {{ providers }}
   </v-container>
 </template>
 
 <script>
 const x = "[/accounts/login]";
-import $accountsApi from "@/assets/apis/accounts";
+import $oauth2Server from "@/assets/apis/oauth2-server";
+import $restServer from "@/assets/apis/rest-server";
 
 export default {
   data: () => ({
     username: undefined,
-    providers: undefined,
+    providers: [],
   }),
 
   computed: {
@@ -42,15 +44,15 @@ export default {
 
     
     login(uri) {
-      let href = "";
       let callback = `${window.location.origin}/accounts/logon`;
-      if (this.hasTested) {
-        href = uri
-          .replace("{provider}", this.username)
-          .replace("{callback}", callback);
-      } else {
-        href = uri + callback;
-      }
+      let href = uri + callback;
+      // if (this.hasTested) {
+      //   href = uri
+      //     .replace("{provider}", this.username)
+      //     .replace("{callback}", callback);
+      // } else {
+      //   href = uri + callback;
+      // }
       console.log(x, "login()", href);
       window.location.href = href;
     },
@@ -59,10 +61,11 @@ export default {
   watch: {},
 
   mounted() {
+
     Promise.resolve()
       .then((r) => {
         console.log(x, "mounted()", 1);
-        return $accountsApi.oauth2.userinfo();
+        return $restServer.oauth2.userinfo();
       })
       .then((r) => {
         console.log(x, "mounted()", 2);
@@ -70,16 +73,64 @@ export default {
       })
       .catch((r) => {
         console.log(x, "mounted()", 3);
-        return $accountsApi.oauth2.providers();
+        return $restServer.oauth2.providers();
       })
       .then((r) => {
-        console.log(x, "mounted()", 4);
-        this.providers = r;
+        console.log(x, "mounted()", 4, r);
+        if(r != undefined && r.forEach != undefined) {
+          r.forEach(provider => this.providers.unshift(provider));
+          return $oauth2Server.oauth2.providers();
+        }
+      })
+      .then((r) => {
+        console.log(x, "mounted()", 5, r);
+        if(r != undefined && r.forEach != undefined) {
+          r.forEach(provider => this.providers.unshift(provider));
+        }
       })
       .catch((r) => {
-        console.log(x, "mounted()", 3);
-        this.$router.push("/");
-      })      
+        console.log(x, "mounted()", 6, r);
+      })
+      .finally((r) => {
+        console.log(x, "mounted()", 7);
+        if(this.providers.length == 1) {
+          this.login(this.providers[0].uri);
+        }
+      })
+
+
+
+
+    // Promise.resolve()
+    //   .then((r) => {
+    //     console.log(x, "mounted()", 1);
+    //     return $accountsApi.oauth2.userinfo();
+    //   })
+    //   .then((r) => {
+    //     console.log(x, "mounted()", 2);
+    //     this.$router.push("/");
+    //   })
+    //   .catch((r) => {
+    //     console.log(x, "mounted()", 3);
+    //     return $accountsApi.oauth2.providers();
+    //   })
+    //   .then((r) => {
+    //     console.log(x, "mounted()", 4);
+    //     this.providers = r;
+
+
+    //     // console.log(x, "mounted()", 5, this.providers.length);
+    //     // console.log(x, "mounted()", 6, this.providers[0].uri);
+
+    //     // if(this.providers.length == 1) {
+    //     //   this.login(this.providers[0].uri);
+    //     // }
+
+    //   })
+    //   .catch((r) => {
+    //     console.log(x, "mounted()", 3);
+    //     // this.$router.push("/");
+    //   })      
   },
 };
 </script>

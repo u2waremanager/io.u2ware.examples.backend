@@ -55,9 +55,8 @@
 
 <script>
 const x = "[/contents]";
-import $accountsApi from "@/assets/apis/accounts";
-
-import $contentsApi from "@/assets/apis/contents.js";
+import $oauth2Server from "@/assets/apis/oauth2-server";
+import $restServer from "@/assets/apis/rest-server";
 import $contentsState from "@/assets/stores/contents.js";
 
 export default {
@@ -81,14 +80,21 @@ export default {
         .confirm(before)
         .then((r) => {
           console.log(x, "logout()", 1, r);
-          return $accountsApi.oauth2.logout();
+          return $restServer.oauth2.logout();
         })
         .then((r) => {
           console.log(x, "logout()", 2, r);
+          return $oauth2Server.oauth2.logout();
+        })
+        .then((r) => {
+          console.log(x, "logout()", 3, r);
+          return this.$dialog.alert(after);
+        })
+        .catch((r) => {
+          console.log(x, "logout()", 4, r);
           return this.$dialog.alert(after);
         })
         .then((r) => {
-          // this.$router.push("/account/logoff");
           this.$router.push("/");
         });
     },
@@ -96,7 +102,7 @@ export default {
 
   mounted() {
 
-    $contentsApi.oauth2
+    $restServer.oauth2
       .userinfo("ROLE_ADMIN")
       .then((r) => {
         console.log(x, "mounted()", 1, r);
@@ -107,7 +113,7 @@ export default {
       .catch((r) => {
         console.log(x, "mounted()", 222, r);
         if(r.username == undefined) {
-          // this.$router.push(`/`);
+          this.$router.push(`/`);
         }else{
           $contentsState.computed.userinfo.set(r);
           this.username = r.username;

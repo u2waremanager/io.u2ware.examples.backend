@@ -163,7 +163,7 @@
 
 <script>
 const x = "[/contents/foos]";
-import $contentsApi from "@/assets/apis/contents.js";
+import $restServer from "@/assets/apis/rest-server.js";
 import $contentsStore from "@/assets/stores/contents.js";
 
 export default {
@@ -232,19 +232,19 @@ export default {
     // handle....
     ////////////////////////////////////////
     handleCreate(){
-      return $contentsApi.foos.create(this.editForm);
+      return $restServer.foos.create(this.editForm);
     },
     handleRead(entity){
-      return $contentsApi.foos.read(entity);
+      return $restServer.foos.read(entity);
     },
     handleUpdate(){
-      return $contentsApi.foos.update(this.editForm);
+      return $restServer.foos.update(this.editForm);
     },
     handleDelete(){
-      return $contentsApi.foos.delete(this.editForm);
+      return $restServer.foos.delete(this.editForm);
     },
     handleSearch(query){
-      return $contentsApi.foos.search(this.searchForm, query);
+      return $restServer.foos.search(this.searchForm, query);
     },
     handleEntities(res){
       this.entitiesTotal = res.page.totalElements;

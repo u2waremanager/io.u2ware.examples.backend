@@ -145,7 +145,7 @@
 </template>
 <script>
 const x = "[/contents/tokens]";
-import $contentsApi from "@/assets/apis/contents.js";
+import $restServer from "@/assets/apis/rest-server.js";
 import $contentsStore from "@/assets/stores/contents.js";
 
 export default {
@@ -214,19 +214,19 @@ export default {
     // handle....
     ////////////////////////////////////////
     handleCreate(){
-      return $contentsApi.tokens.create(this.editForm);
+      return $restServer.tokens.create(this.editForm);
     },
     handleRead(entity){
-      return $contentsApi.tokens.read(entity);
+      return $restServer.tokens.read(entity);
     },
     handleUpdate(){
-      return $contentsApi.tokens.update(this.editForm);
+      return $restServer.tokens.update(this.editForm);
     },
     handleDelete(){
-      return $contentsApi.tokens.delete(this.editForm);
+      return $restServer.tokens.delete(this.editForm);
     },
     handleSearch(query){
-      return $contentsApi.tokens.search(this.searchForm, query);
+      return $restServer.tokens.search(this.searchForm, query);
     },
     handleEntities(res){
       this.entitiesTotal = res.page.totalElements;

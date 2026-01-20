@@ -28,7 +28,7 @@
 
 <script>
 const x = "[/]";
-import $accountsApi from "@/assets/apis/accounts";
+import $restServer from "@/assets/apis/rest-server";
 
 export default {
   data: () => ({}),
@@ -39,7 +39,7 @@ export default {
 
   methods: {
     start() {
-      $accountsApi.oauth2
+      $restServer.oauth2
         .userinfo()
         .then((r) => {
           console.log(x, "start()", 1, r);

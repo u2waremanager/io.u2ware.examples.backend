@@ -116,7 +116,7 @@ const $common = {
 
       return $axios({
         method : 'OPTIONS',
-        url: "/vite",
+        url: "/env",
       })
       .then((r) => {
         // console.log(1, arguments, r.data);
@@ -126,6 +126,9 @@ const $common = {
           let p = `${arguments[i].toLowerCase()}`;
           p = p.startsWith("vite_") ? p.substr(5) : p;
           p = p.replaceAll('_', '.');
+
+          // console.log(2, p);
+
 
           let value = r.data[p];
 

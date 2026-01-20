@@ -3,13 +3,13 @@ import $commonStore from "@/assets/stores/common.js";
 
 const name = "[/assets/apis/accounts.js]";
 
-const $accountsApi = {
+const $server = {
 
   api: {
 
     execute(optionsBuilder) {
       return $common.meta
-        .env("VITE_API_ACCOUNTS", "VITE_API_TOKEN")
+        .env("VITE_OAUTH2_SERVER")
         .then(optionsBuilder)
         .then((e) => {
           return $common.api.execute(e);
@@ -26,32 +26,33 @@ const $accountsApi = {
       if (typeof data == "object") {
         return `${data._links.self.href}`;
       } else {
-        return `${env["VITE_API_ACCOUNTS"]}${data}`;
+        return `${env["VITE_OAUTH2_SERVER"]}${data}`;
       }
     },    
 
     token(env){
 
-      console.log("token", 1, env);
+      // console.log("token", 1, env);
 
-      let t = env["VITE_API_TOKEN"];
-      let token = t == undefined ? $commonStore.computed.token.get() : t;
-      console.log("token", 2, token);
-      return token;
+      // let t = env["VITE_API_TOKEN"];
+      // let token = t == undefined ? $commonStore.computed.token.get() : t;
+      // console.log("token", 2, token);
+      // return token;
+      return undefined;
     },    
 
     headers(env, headers) {
-      let token = $accountsApi.api.token(env);
+      let token = $server.api.token(env);
       return $common.api.headers(headers, token);
     },
 
     params(env, params){
-      let token = $accountsApi.api.token(env);
+      let token = $server.api.token(env);
       return $common.api.params(params, token);
     },
 
     query(env, query) {
-      let token = $accountsApi.api.token(env);
+      let token = $server.api.token(env);
       return $common.api.query(query, token);
     },    
 
@@ -66,27 +67,29 @@ const $accountsApi = {
   // APIs (Oath2)
   ////////////////////////////////////  
   oauth2: {
-    userinfo(roles) {
-      return $accountsApi.api.execute((e) => ({
-        method: "GET",
-        url: $accountsApi.api.url(e, "/oauth2/userinfo") ,
-        headers: $accountsApi.api.headers(e, {}),
-      }));
-    },
-
-
     providers() {
-      return $accountsApi.api.execute((e) => ({
+      return $server.api.execute((e) => ({
         method: "GET",
-        url: $accountsApi.api.url(e, "/oauth2/providers")  
+        url: $server.api.url(e, "/oauth2/providers")  
       }));
     },
+    
+    userinfo(roles) {
+      return $server.api.execute((e) => ({
+        method: "GET",
+        url: $server.api.url(e, "/oauth2/userinfo") ,
+        headers: $server.api.headers(e, {}),
+      }));
+    },
+
+
+
 
     login(query){
       let token = query.id_token;
 
-      return $accountsApi.api.execute((e) => ({
-          url: $accountsApi.api.url(e, "/oauth2/userinfo") ,
+      return $server.api.execute((e) => ({
+          url: $server.api.url(e, "/oauth2/userinfo") ,
           headers: $common.api.headers({}, token),
       }))
       .then(r=>{
@@ -97,9 +100,9 @@ const $accountsApi = {
     },
 
     logout() {
-      return $accountsApi.api.execute((e) => ({
-        url: $accountsApi.api.url(e, "/oauth2/logout") ,
-        headers: $accountsApi.api.headers(e, {}),
+      return $server.api.execute((e) => ({
+        url: $server.api.url(e, "/oauth2/logout") ,
+        headers: $server.api.headers(e, {}),
       }))
       .finally((r) => {
         $commonStore.computed.oauth2.set(undefined);
@@ -112,4 +115,4 @@ const $accountsApi = {
 
     
 }
-export default $accountsApi;
+export default $server;
