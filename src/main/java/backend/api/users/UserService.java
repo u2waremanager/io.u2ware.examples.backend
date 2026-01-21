@@ -20,12 +20,12 @@ import backend.api.tokens.TokenRepository;
 import backend.domain.Token;
 import backend.domain.User;
 import backend.domain.properties.AttributesSet;
-import io.u2ware.common.oauth2.jwt.AuthenticationContext;
-import io.u2ware.common.oauth2.jwt.OAuth2ResourceServerUserinfoService;
+import backend.domain.security.AuthenticationContext;
+import io.u2ware.common.oauth2.jwt.UserAuthoritiesConverter;
 
 
 @Component
-public class UserService implements Converter<Jwt, Collection<GrantedAuthority>>, OAuth2ResourceServerUserinfoService {
+public class UserService implements UserAuthoritiesConverter {
 
 
     protected Log logger = LogFactory.getLog(getClass());
@@ -98,32 +98,32 @@ public class UserService implements Converter<Jwt, Collection<GrantedAuthority>>
     }
 
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        logger.info("loadUserByUsername 1: "+username);
+    // @Override
+    // public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    //     logger.info("loadUserByUsername 1: "+username);
 
-        Optional<User> user = userRepository.findById(username);
-        if(user.isPresent()) return user.get();
+    //     Optional<User> user = userRepository.findById(username);
+    //     if(user.isPresent()) return user.get();
 
-        logger.info("loadUserByUsername 2: "+username);
+    //     logger.info("loadUserByUsername 2: "+username);
 
-        String rootUser = this.securityProperties.getUser().getName();
-        if(! rootUser.equals(username)) {
-            throw new UsernameNotFoundException("User not found: " + username);
-        }
+    //     String rootUser = this.securityProperties.getUser().getName();
+    //     if(! rootUser.equals(username)) {
+    //         throw new UsernameNotFoundException("User not found: " + username);
+    //     }
 
-        String password = this.securityProperties.getUser().getPassword();
-        logger.info("loadUserByUsername 3: "+password);
-        logger.info("loadUserByUsername 4: "+passwordEncoder);
-        String rootPassword = passwordEncoder != null ? passwordEncoder.encode(password) : "{noop}"+password;
-        logger.info("loadUserByUsername 5: "+rootPassword);
+    //     String password = this.securityProperties.getUser().getPassword();
+    //     logger.info("loadUserByUsername 3: "+password);
+    //     logger.info("loadUserByUsername 4: "+passwordEncoder);
+    //     String rootPassword = passwordEncoder != null ? passwordEncoder.encode(password) : "{noop}"+password;
+    //     logger.info("loadUserByUsername 5: "+rootPassword);
 
 
-        User u = new User();
-        u.setUsername(rootUser);
-        u.setPassword(rootPassword);
-        u.setRoles(new AttributesSet("ROLE_ADMIN"));
+    //     User u = new User();
+    //     u.setUsername(rootUser);
+    //     u.setPassword(rootPassword);
+    //     u.setRoles(new AttributesSet("ROLE_ADMIN"));
 
-        return userRepository.findById(username).map(r->r).orElse(userRepository.save(u));
-    }
+    //     return userRepository.findById(username).map(r->r).orElse(userRepository.save(u));
+    // }
 }

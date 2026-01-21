@@ -17,9 +17,9 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 
-import backend.api.ResponseStatusExceptions;
 import backend.domain.Token;
 import backend.domain.auditing.AuditedAuditor;
+import backend.domain.exception.ResponseStatusExceptions;
 import io.u2ware.common.data.rest.core.annotation.HandleAfterRead;
 import io.u2ware.common.data.rest.core.annotation.HandleBeforeRead;
 import io.u2ware.common.oauth2.jose.JoseKeyEncryptor;

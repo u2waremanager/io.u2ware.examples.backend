@@ -32,11 +32,13 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import io.u2ware.common.oauth2.jwt.OAuth2ResourceServerAdministration;
-import io.u2ware.common.oauth2.jwt.OAuth2ResourceServerAdministration.JwtEndpoints;
-import io.u2ware.common.oauth2.jwt.OAuth2ResourceServerUserinfoService;
+import com.nimbusds.jose.jwk.source.JWKSource;
+import com.nimbusds.jose.proc.SecurityContext;
 
-
+import io.u2ware.common.oauth2.jwt.SimpleJwtAuthenticationConverter;
+import io.u2ware.common.oauth2.jwt.SimpleJwtDecoder;
+import io.u2ware.common.oauth2.jwt.UserAuthoritiesConverter;
+import io.u2ware.common.oauth2.jwt.UserDetailsConverter;
 
 
 
@@ -61,7 +63,7 @@ public class ApplicationSecurityConfig {
         return source;
     }
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, OAuth2ResourceServerAdministration admin) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(AbstractHttpConfigurer::disable)
             .cors(Customizer.withDefaults())
@@ -75,17 +77,31 @@ public class ApplicationSecurityConfig {
             .oauth2ResourceServer(oauth2 -> oauth2
                 .jwt(Customizer.withDefaults())
             )
-            .formLogin(formLogin -> formLogin
-                .defaultSuccessUrl("/oauth2/logon") 
-            )
-            .logout(logout -> logout
-                .logoutSuccessUrl("/oauth2/logoff")
-            )
+            // .formLogin(formLogin -> formLogin
+            //     .defaultSuccessUrl("/oauth2/logon") 
+            // )
+            // .logout(logout -> logout
+            //     .logoutSuccessUrl("/oauth2/logoff")
+            // )
             ;
         
         return http.build();
     }
 
+    /////////////////////////////////////////////////////////
+    // OAuth2ResourceServer
+    /////////////////////////////////////////////////////////
+    private @Autowired OAuth2ResourceServerProperties op;
+    private @Autowired(required = false) UserAuthoritiesConverter userAuthoritiesConverter;
+
+    @Bean 
+    public JwtDecoder jwtDecoder() throws Exception{
+        return new SimpleJwtDecoder(op);
+    }
+    @Bean 
+    public JwtAuthenticationConverter jwtConverter() {
+        return new SimpleJwtAuthenticationConverter(userAuthoritiesConverter);
+    }
 
     @Bean
     public BearerTokenResolver bearerTokenResolver() {
@@ -94,52 +110,4 @@ public class ApplicationSecurityConfig {
         return r;
     }
 
-
-    /////////////////////////////////////////////////////////
-    // OAuth2ResourceServerAdministration
-    /////////////////////////////////////////////////////////
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-    }  
-
-    @Bean
-    public OAuth2ResourceServerAdministration oauth2ResourceServerAdministration(
-        SecurityProperties sp, OAuth2ResourceServerProperties op, PasswordEncoder passwordEncoder) {
-        return new OAuth2ResourceServerAdministration(sp, op, passwordEncoder);
-    }
-
-    /////////////////////////////////////////////////////////
-    // 
-    /////////////////////////////////////////////////////////
-    private @Autowired OAuth2ResourceServerUserinfoService userinfo;
-    private @Autowired Converter<Jwt, Collection<GrantedAuthority>> converter;
-
-    @Bean
-    public JwtEncoder jwtEncoder(OAuth2ResourceServerAdministration admin) throws Exception{
-        return admin.jwtEncoder();
-    }
-
-    @Bean 
-    public JwtDecoder jwtDecoder(OAuth2ResourceServerAdministration admin) throws Exception{
-        return admin.jwtDecoder();
-    }
-
-    @Bean 
-    public JwtAuthenticationConverter jwtConverter(OAuth2ResourceServerAdministration admin) {
-        return admin.jwtConverter(converter);
-    }
-
-    @Bean 
-    public JwtEndpoints jwtEndpoints(OAuth2ResourceServerAdministration admin) {
-        return admin.jwtEndpoints(userinfo);
-    }
-
-    /////////////////////////////////////////////////////////
-    // 
-    /////////////////////////////////////////////////////////
-	@Bean
-	public UserDetailsService userDetailsService(OAuth2ResourceServerAdministration admin) {
-		return admin.userDetailsService(userinfo);
-	}
 }

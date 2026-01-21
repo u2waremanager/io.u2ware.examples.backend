@@ -7,7 +7,8 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.stereotype.Component;
 
-import io.u2ware.common.oauth2.jwt.AuthenticationContext;
+import backend.domain.security.AuthenticationContext;
+
 
 @Component
 public class AuditedAuditor implements AuditorAware<Audited> {

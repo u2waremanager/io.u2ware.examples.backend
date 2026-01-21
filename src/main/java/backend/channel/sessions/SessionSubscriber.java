@@ -1,4 +1,4 @@
-package backend.stomp.sessions;
+package backend.channel.sessions;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

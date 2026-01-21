@@ -12,9 +12,9 @@ import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import backend.api.ResponseStatusExceptions;
 import backend.domain.User;
 import backend.domain.auditing.AuditedAuditor;
+import backend.domain.exception.ResponseStatusExceptions;
 import io.u2ware.common.data.rest.core.annotation.HandleAfterRead;
 import io.u2ware.common.data.rest.core.annotation.HandleBeforeRead;
 
