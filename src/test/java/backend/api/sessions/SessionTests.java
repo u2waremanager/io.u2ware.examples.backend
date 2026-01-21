@@ -3,7 +3,6 @@ package backend.api.sessions;
 import static io.u2ware.common.docs.MockMvcRestDocs.is2xx;
 import static io.u2ware.common.docs.MockMvcRestDocs.is4xx;
 import static io.u2ware.common.docs.MockMvcRestDocs.post;
-import static io.u2ware.common.docs.MockMvcRestDocs.print;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
