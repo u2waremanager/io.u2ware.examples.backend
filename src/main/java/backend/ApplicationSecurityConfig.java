@@ -54,22 +54,20 @@ public class ApplicationSecurityConfig {
         http
             .csrf(AbstractHttpConfigurer::disable)
             .cors(Customizer.withDefaults())
-            .authorizeHttpRequests(authorize -> authorize
+            .authorizeHttpRequests(authorize ->{  
 
-                .requestMatchers(HttpMethod.GET, "/api").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/profile/**").permitAll()
-                .requestMatchers("/api/**").authenticated()
-                .anyRequest().permitAll()  
-            )
+                    if(SimpleJwtDecoder.available(op)) {                    
+                        authorize.requestMatchers("/api/**").authenticated()
+                        ;
+                    }else{
+                        authorize.requestMatchers("/api/**").permitAll()
+                        ;
+                    }
+                    authorize.anyRequest().permitAll();
+            })
             .oauth2ResourceServer(oauth2 -> oauth2
                 .jwt(Customizer.withDefaults())
             )
-            // .formLogin(formLogin -> formLogin
-            //     .defaultSuccessUrl("/oauth2/logon") 
-            // )
-            // .logout(logout -> logout
-            //     .logoutSuccessUrl("/oauth2/logoff")
-            // )
             ;
         
         return http.build();

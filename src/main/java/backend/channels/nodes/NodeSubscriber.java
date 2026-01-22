@@ -1,4 +1,4 @@
-package backend.channel.sessions;
+package backend.channels.nodes;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -9,24 +9,24 @@ import org.springframework.util.ClassUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import backend.api.sessions.SessionRepository;
-import backend.domain.Session;
+import backend.api.nodes.NodeRepository;
+import backend.domain.Node;
 import io.u2ware.common.stomp.client.WebsocketStompClientHandler;
 import io.u2ware.common.stomp.client.config.WebsocketStompClientProperties;
 
 @Component
-public class SessionSubscriber implements WebsocketStompClientHandler{
+public class NodeSubscriber implements WebsocketStompClientHandler{
 
 
     protected Log logger = LogFactory.getLog(getClass());
 
 
-    protected @Autowired SessionRepository sessionRepository;
+    protected @Autowired NodeRepository sessionRepository;
     protected @Autowired WebsocketStompClientProperties properties;
 
     @Override
     public String getDestination() {
-        String destination = properties.getDestinations().get(ClassUtils.getShortName(getClass()));
+        String destination = properties.getDestinations().get("nodes");
         return destination;
     }
 
@@ -41,7 +41,7 @@ public class SessionSubscriber implements WebsocketStompClientHandler{
         String state = message.get("payload").get("state").asText();
 
 
-        Session e = new Session();
+        Node e = new Node();
         e.setPrincipal(principal);
         e.setTimestamp(timestamp);
         e.setState(state);
