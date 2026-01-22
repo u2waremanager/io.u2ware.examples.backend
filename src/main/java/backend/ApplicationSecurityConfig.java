@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -24,7 +23,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import io.u2ware.common.oauth2.jwt.SimpleJwtAuthenticationConverter;
-import io.u2ware.common.oauth2.jwt.SimpleJwtDecoder;
+import io.u2ware.common.oauth2.jwt.SimpleJwtCodec;
 import io.u2ware.common.oauth2.jwt.UserAuthoritiesConverter;
 
 
@@ -56,7 +55,7 @@ public class ApplicationSecurityConfig {
             .cors(Customizer.withDefaults())
             .authorizeHttpRequests(authorize ->{  
 
-                    if(SimpleJwtDecoder.available(op)) {                    
+                    if(SimpleJwtCodec.available(op)) {                    
                         authorize.requestMatchers("/api/**").authenticated()
                         ;
                     }else{
@@ -81,7 +80,7 @@ public class ApplicationSecurityConfig {
 
     @Bean 
     public JwtDecoder jwtDecoder() throws Exception{
-        return new SimpleJwtDecoder(op);
+        return new SimpleJwtCodec(op);
     }
     @Bean 
     public JwtAuthenticationConverter jwtConverter() {
