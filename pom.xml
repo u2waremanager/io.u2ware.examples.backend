@@ -11,10 +11,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>io.u2ware.product</groupId>
-	<artifactId>u2ware-sample-rest</artifactId>
+	<artifactId>u2ware-examples-backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>u2ware-sample-rest</name>
-	<description>u2ware-sample-rest</description>
+	<name>u2ware-examples-backend</name>
+	<description>u2ware-examples-backend</description>
 	<url/>
 	<licenses>
 		<license/>
