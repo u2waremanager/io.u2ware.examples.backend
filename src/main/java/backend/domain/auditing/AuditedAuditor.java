@@ -17,11 +17,15 @@ public class AuditedAuditor implements AuditorAware<Audited> {
 
     @Override
     public Optional<Audited> getCurrentAuditor() {
-        Audited entity = new Audited();
-        entity.setUsername(AuditedAuditor.getCurrentUsername());
-        entity.setTimestamp(AuditedAuditor.getCurrentTimestamp());
-        entity.setAddress(AuditedAuditor.getCurrentAddress());
-        return Optional.of(entity);
+        try{
+            Audited entity = new Audited();
+            entity.setUsername(AuditedAuditor.getCurrentUsername());
+            entity.setTimestamp(AuditedAuditor.getCurrentTimestamp());
+            entity.setAddress(AuditedAuditor.getCurrentAddress());
+            return Optional.of(entity);
+        }catch(Exception e){
+            return Optional.of(new Audited());
+        }
     }
 
 

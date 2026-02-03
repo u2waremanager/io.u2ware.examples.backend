@@ -1,58 +1,55 @@
-import $common from "@/assets/apis/common.js";
-import $commonStore from "@/assets/stores/common.js";
+import $base from "@/assets/backend/base.js";
+import $userinfo from "@/assets/stores/userinfo.js";
 
 // import $contentsStore from "@/assets/stores/contents.js";
 
-const name = "[/assets/apis/contents.js]";
+const name = "[/assets/backend/example-server.js]";
 
 const $server = {
   api: {
     execute(optionsBuilder) {
-      return $common.meta
-        .env("VITE_REST_SERVER", "VITE_REST_SERVER_TOKEN")
+      return $base.meta
+        .env("VITE_EXAMPLE_SERVER")
         .then(optionsBuilder)
         .then((e) => {
-          return $common.api.execute(e);
+          return $base.api.execute(e);
         })
         .then((e) => {
-          return $common.api.then(e);
+          return $base.api.then(e);
         })
         .catch((e) => {
-          throw $common.api.catch(e);
+          throw $base.api.catch(e);
         });
     },
 
-    url(env, data) {
-      if (typeof data == "object") {
-        return `${data._links.self.href}`;
-      } else {
-        return `${env["VITE_REST_SERVER"]}${data}`;
-      }
+    url(env, path) {
+      let paths = (path != null) ? path : ""
+      return `${env["VITE_EXAMPLE_SERVER"]}${paths}`;
     },
 
-    token(env){
-      let t = env["VITE_REST_SERVER_TOKEN"];
-      let token = t == undefined ? $commonStore.computed.token.get() : t;
+    token(env) {
+      let token = $userinfo.computed.token.get();
+      // alert(token);
       return token;
-    }, 
+    },
 
     headers(env, headers) {
       let token = $server.api.token(env);
-      return $common.api.headers(headers, token);
+      return $base.api.headers(headers, token);
     },
 
     params(env, params){
       let token = $server.api.token(env);
-      return $common.api.params(params, token);
+      return $base.api.params(params, token);
     },
 
     query(env, query) {
       let token = $server.api.token(env);
-      return $common.api.query(query, token);
+      return $base.api.query(query, token);
     },
 
     pageable(data) {
-      return $common.api.pageable(data);
+      return $base.api.pageable(data);
     },
   },
 
@@ -62,56 +59,17 @@ const $server = {
   /////////////////////////////////////
   oauth2: {
 
-    providers() {
-      return $server.api.execute((e) => ({
-        method: "GET",
-        url: $server.api.url(e, "/oauth2/providers")  
-      }));
-    },
-
     userinfo(role) {
       return $server.api.execute((e) => ({
         method: "GET",
-        url: $server.api.url(e, "/oauth2/userinfo"),
-        headers: $server.api.headers(e, {}),        
-      })).then(r => {
-        if(role == undefined) return r;       
-
-        let roles = (r.roles != undefined) ? r.roles : r.claims.authorities;
-        let username = r.username != undefined ? r.username : r.claims.sub;
-        r["username"] = username;
-
-        let idx = roles.findIndex(e => e == role);
-        if(idx > -1) {
-          return r;
-        }else{
-          throw r;
-        }
-      });
-    },
-    
-    login(query){
-      let token = query.id_token;
-
-      return $server.api.execute((e) => ({
-          url: $server.api.url(e, "/oauth2/userinfo") ,
-          headers: $common.api.headers({}, token),
-      }))
-      .then(r=>{
-        $commonStore.computed.oauth2.set(query);
-        $commonStore.computed.token.set(token);
-        return r;
-      });
-    },
-
-    logout() {
-      return $server.api.execute((e) => ({
-        url: $server.api.url(e, "/oauth2/logout") ,
+        url: $server.api.url(e, "/oauth2/userinfo") ,
         headers: $server.api.headers(e, {}),
-      }))
-      .finally((r) => {
-        $commonStore.computed.oauth2.set(undefined);
-        $commonStore.computed.token.set(undefined);
+      })).then(r => {
+        if(role == undefined) return r;   
+        if(r.authorities == undefined) return r;
+        r[role] = r.authorities.findIndex(e => e == role) > -1;
+
+        return r;
       });
     },
   },
@@ -142,14 +100,14 @@ const $server = {
     read(data) {
       return $server.api.execute((e) => ({
         method: "GET",
-        url: $server.api.url(e, data),
+        url: data._links.self.href,
         headers: $server.api.headers(e, {}),
       }));
     },
     update(data) {
       return $server.api.execute((e) => ({
         method: "PUT",
-        url: $server.api.url(e, data),
+        url: data._links.self.href,
         headers: $server.api.headers(e, {}),
         data: data,
       }));
@@ -157,7 +115,7 @@ const $server = {
     delete(data) {
       return $server.api.execute((e) => ({
         method: "DELETE",
-        url: $server.api.url(e, data),
+        url: data._links.self.href,
         headers: $server.api.headers(e, {}),
       }));
     },
@@ -188,14 +146,14 @@ const $server = {
     read(data) {
       return $server.api.execute((e) => ({
         method: "POST",
-        url: $server.api.url(e, data),
+        url: data._links.self.href,
         headers: $server.api.headers(e, {}),
       }));
     },
     update(data) {
       return $server.api.execute((e) => ({
         method: "PUT",
-        url: $server.api.url(e, data),
+        url: data._links.self.href,
         headers: $server.api.headers(e, {}),
         data: data,
       }));
@@ -203,7 +161,7 @@ const $server = {
     delete(data) {
       return $server.api.execute((e) => ({
         method: "DELETE",
-        url: $server.api.url(e, data),
+        url: data._links.self.href,
         headers: $server.api.headers(e, {}),
       }));
     },
@@ -234,14 +192,14 @@ const $server = {
     read(data) {
       return $server.api.execute((e) => ({
         method: "POST",
-        url: $server.api.url(e, data),
+        url: data._links.self.href,
         headers: $server.api.headers(e, {}),
       }));
     },
     update(data) {
       return $server.api.execute((e) => ({
         method: "PUT",
-        url: $server.api.url(e, data),
+        url: data._links.self.href,
         headers: $server.api.headers(e, {}),
         data: data,
       }));
@@ -249,69 +207,7 @@ const $server = {
     delete(data) {
       return $server.api.execute((e) => ({
         method: "DELETE",
-        url: $server.api.url(e, data),
-        headers: $server.api.headers(e, {}),
-      }));
-    },
-  },
-
-  /////////////////////////////////////
-  //
-  /////////////////////////////////////  
-  sessions: {
-    search(data, params) {
-      return $server.api
-        .execute((e) => ({
-          method: "POST",
-          url: $server.api.url(e, "/api/sessions/search"),
-          headers: $server.api.headers(e, {}),
-          params: $server.api.pageable(params),
-          data: data,
-        }));
-    },
-  },  
-
-  /////////////////////////////////////
-  //
-  /////////////////////////////////////
-  users: {
-    search(data, params) {
-      return $server.api
-        .execute((e) => ({
-          method: "POST",
-          url: $server.api.url(e, "/api/users/search"),
-          headers: $server.api.headers(e, {}),
-          params: $server.api.pageable(params),
-          data: data,
-        }));
-    },
-    create(data) {
-      return $server.api.execute((e) => ({
-        method: "POST",
-        url: $server.api.url(e, "/api/users"),
-        headers: $server.api.headers(e, {}),
-        data: data,
-      }));
-    },
-    read(data) {
-      return $server.api.execute((e) => ({
-        method: "POST",
-        url: $server.api.url(e, data),
-        headers: $server.api.headers(e, {}),
-      }));
-    },
-    update(data) {
-      return $server.api.execute((e) => ({
-        method: "PUT",
-        url: $server.api.url(e, data),
-        headers: $server.api.headers(e, {}),
-        data: data,
-      }));
-    },
-    delete(data) {
-      return $server.api.execute((e) => ({
-        method: "DELETE",
-        url: $server.api.url(e, data),
+        url: data._links.self.href,
         headers: $server.api.headers(e, {}),
       }));
     },
@@ -321,12 +217,12 @@ const $server = {
   /////////////////////////////////////
   //
   /////////////////////////////////////
-  tokens: {
+  nodes: {
     search(data, params) {
       return $server.api
         .execute((e) => ({
           method: "POST",
-          url: $server.api.url(e, "/api/tokens/search"),
+          url: $server.api.url(e, "/api/nodes/search"),
           headers: $server.api.headers(e, {}),
           params: $server.api.pageable(params),
           data: data,
@@ -335,7 +231,7 @@ const $server = {
     create(data) {
       return $server.api.execute((e) => ({
         method: "POST",
-        url: $server.api.url(e, "/api/tokens"),
+        url: $server.api.url(e, "/api/nodes"),
         headers: $server.api.headers(e, {}),
         data: data,
       }));
@@ -343,14 +239,14 @@ const $server = {
     read(data) {
       return $server.api.execute((e) => ({
         method: "POST",
-        url: $server.api.url(e, data),
+        url:data._links.self.href,
         headers: $server.api.headers(e, {}),
       }));
     },
     update(data) {
       return $server.api.execute((e) => ({
         method: "PUT",
-        url: $server.api.url(e, data),
+        url: data._links.self.href,
         headers: $server.api.headers(e, {}),
         data: data,
       }));
@@ -358,7 +254,54 @@ const $server = {
     delete(data) {
       return $server.api.execute((e) => ({
         method: "DELETE",
-        url: $server.api.url(e, data),
+        url: data._links.self.href,
+        headers: $server.api.headers(e, {}),
+      }));
+    },
+  },
+
+
+  /////////////////////////////////////
+  //
+  /////////////////////////////////////
+  accounts: {
+    search(data, params) {
+      return $server.api
+        .execute((e) => ({
+          method: "POST",
+          url: $server.api.url(e, "/api/accounts/search"),
+          headers: $server.api.headers(e, {}),
+          params: $server.api.pageable(params),
+          data: data,
+        }));
+    },
+    create(data) {
+      return $server.api.execute((e) => ({
+        method: "POST",
+        url: $server.api.url(e, "/api/accounts"),
+        headers: $server.api.headers(e, {}),
+        data: data,
+      }));
+    },
+    read(data) {
+      return $server.api.execute((e) => ({
+        method: "POST",
+        url: data._links.self.href,
+        headers: $server.api.headers(e, {}),
+      }));
+    },
+    update(data) {
+      return $server.api.execute((e) => ({
+        method: "PUT",
+        url: data._links.self.href,
+        headers: $server.api.headers(e, {}),
+        data: data,
+      }));
+    },
+    delete(data) {
+      return $server.api.execute((e) => ({
+        method: "DELETE",
+        url: data._links.self.href,
         headers: $server.api.headers(e, {}),
       }));
     },

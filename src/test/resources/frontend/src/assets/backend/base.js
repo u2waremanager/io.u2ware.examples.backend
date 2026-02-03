@@ -1,9 +1,9 @@
 import qs from "qs";
 import $axios from "axios";
 
-const name = "[/assets/apis/common.js]";
+const name = "[/assets/backend/base.js]";
 
-const $common = {
+const $base = {
 
   ////////////////////////////////////
   // api Utils..
@@ -74,18 +74,9 @@ const $common = {
     },
 
     query(query, token){
-      if(token == undefined) {
-        return (query == undefined) ? "" : query;
-      }
-      if (query == undefined) {
-        let params = { access_token: `${token}` };
-        return qs.stringify(params, { arrayFormat: "repeat" });
-
-      } else {
-        let params = qs.parse(query);
-        params["access_token"] = `${token}`;
-        return qs.stringify(params, { arrayFormat: "repeat" });
-      } 
+      let params = (query == undefined || query instanceof object) ? query : qs.parse(query);
+      params = $base.api.params(params, token);
+      return qs.stringify(params, { arrayFormat: "repeat" });
     },
 
     pageable(data) {
@@ -119,7 +110,7 @@ const $common = {
         url: "/env",
       })
       .then((r) => {
-        // console.log(1, arguments, r.data);
+        // console.log(1, r.data);
         let result = {};
         for(let i=0; i < arguments.length; i++) {
 
@@ -129,9 +120,7 @@ const $common = {
 
           // console.log(2, p);
 
-
           let value = r.data[p];
-
           if(value == undefined) {
             let k = `${arguments[i].toUpperCase()}`;
             k = k.startsWith("VITE_") ? k : `VITE_${k}`;
@@ -144,6 +133,9 @@ const $common = {
           }
           result[arguments[i]] = value;
         }
+
+        // console.log(2, result);
+
         return result;
       })
       .catch((e) => {
@@ -209,4 +201,4 @@ const $common = {
     }
   }
 }
-export default $common;
+export default $base;

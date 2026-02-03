@@ -8,7 +8,7 @@
 
 <script>
 const x = "[/accounts/logoff]";
-import $restServer from "@/assets/apis/rest-server";
+import $oauth2Server from "@/assets/backend/oauth2-server";
 
 export default {
   methods: {
@@ -21,7 +21,7 @@ export default {
     Promise.resolve()
       .then((r) => {
         console.log(x, "mounted()", 1);
-        return $restServer.oauth2.userinfo();
+        return $oauth2Server.oauth2.userinfo();
       })
       .then((r) => {
         console.log(x, "mounted()", 2);

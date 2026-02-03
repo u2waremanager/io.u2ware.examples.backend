@@ -25,6 +25,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import io.u2ware.common.oauth2.jwt.SimpleJwtAuthenticationConverter;
 import io.u2ware.common.oauth2.jwt.SimpleJwtCodec;
 import io.u2ware.common.oauth2.jwt.UserAuthoritiesConverter;
+import io.u2ware.common.oauth2.jwt.UserinfoEndpoint;
 
 
 
@@ -62,6 +63,7 @@ public class ApplicationSecurityConfig {
                         authorize.requestMatchers("/api/**").permitAll()
                         ;
                     }
+                    authorize.requestMatchers("/oauth2/userinfo").authenticated(); //UserinfoEndpoint
                     authorize.anyRequest().permitAll();
             })
             .oauth2ResourceServer(oauth2 -> oauth2
@@ -82,6 +84,7 @@ public class ApplicationSecurityConfig {
     public JwtDecoder jwtDecoder() throws Exception{
         return new SimpleJwtCodec(op);
     }
+
     @Bean 
     public JwtAuthenticationConverter jwtConverter() {
         return new SimpleJwtAuthenticationConverter(userAuthoritiesConverter);
@@ -94,4 +97,11 @@ public class ApplicationSecurityConfig {
         return r;
     }
 
+    /////////////////////////////////////////////////////////
+    // OAuth2ResourceServer - userinfo
+    /////////////////////////////////////////////////////////
+    @Bean
+    public UserinfoEndpoint userinfoEndpoint() {
+        return new UserinfoEndpoint();
+    }
 }

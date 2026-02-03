@@ -11,13 +11,13 @@
 
 <script>
 const x = "[/accounts/logon]";
-import $restServer from "@/assets/apis/rest-server";
-import $commonStore from "@/assets/stores/common.js";
+import $oauth2Server from "@/assets/backend/oauth2-server";
+import $userinfo from "@/assets/stores/userinfo.js";
 
 export default {
   computed: {
-    oauth2: $commonStore.computed.oauth2,
-    token: $commonStore.computed.token,
+    oauth2: $userinfo.computed.oauth2,
+    token: $userinfo.computed.token,
   },
 
   mounted() {
@@ -26,16 +26,16 @@ export default {
     Promise.resolve()
       .then((r) => {
         console.log(x, "mounted()", 1);
-        return $restServer.oauth2.userinfo();
+        return $oauth2Server.oauth2.userinfo();
       })
       .then((r) => {
         console.log(x, "mounted()", 2);
-        // this.$router.push("/");
+        this.$router.push("/contents");
       })
       .catch((r) => {
         // OK. action !!
         console.log(x, "mounted()", 3, this.$route.query);
-        return $restServer.oauth2.login(this.$route.query);
+        return $oauth2Server.oauth2.login(this.$route.query);
       })
       .then((r) => {
         console.log(x, "mounted()", 4, r);

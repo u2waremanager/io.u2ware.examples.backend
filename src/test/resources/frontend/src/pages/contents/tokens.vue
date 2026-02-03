@@ -145,7 +145,7 @@
 </template>
 <script>
 const x = "[/contents/tokens]";
-import $restServer from "@/assets/apis/rest-server.js";
+import $restServer from "@/assets/backend/example-server.js";
 import $contentsStore from "@/assets/stores/contents.js";
 
 export default {

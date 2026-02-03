@@ -25,6 +25,7 @@
         <v-list-item to="/examples/plugins/dialog"> dialog </v-list-item>
         <v-list-item to="/examples/plugins/storeSet"> Store Set  </v-list-item>
         <v-list-item to="/examples/plugins/storeGet"> Store Get </v-list-item>
+        <v-list-item to="/examples/plugins/autocomplate"> autocomplate </v-list-item>
       </v-list>
     </v-navigation-drawer>
 

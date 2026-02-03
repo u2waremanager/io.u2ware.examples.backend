@@ -24,8 +24,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import backend.api.bars.BarDocs;
 import backend.api.foos.FooDocs;
-import backend.api.oauth2.Oauth2Docs;
 import backend.domain.Item.Child;
+import backend.oauth2.Oauth2Docs;
 
 
 @SpringBootTest

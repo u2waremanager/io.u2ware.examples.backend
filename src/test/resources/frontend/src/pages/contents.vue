@@ -55,9 +55,9 @@
 
 <script>
 const x = "[/contents]";
-import $oauth2Server from "@/assets/apis/oauth2-server";
-import $restServer from "@/assets/apis/rest-server";
-import $contentsState from "@/assets/stores/contents.js";
+import $oauth2Server from "@/assets/backend/oauth2-server";
+import $exampleServer from "@/assets/backend/example-server";
+import $common from "@/assets/stores/common.js";
 
 export default {
   data: () => ({
@@ -67,8 +67,8 @@ export default {
   }),
 
   computed: {
-    subtitle: $contentsState.computed.subtitle,
-    userinfo : $contentsState.computed.userinfo,
+    subtitle: $common.computed.subtitle,
+    userinfo : $common.computed.userinfo,
   },
 
   methods: {
@@ -80,46 +80,57 @@ export default {
         .confirm(before)
         .then((r) => {
           console.log(x, "logout()", 1, r);
-          return $restServer.oauth2.logout();
-        })
-        .then((r) => {
-          console.log(x, "logout()", 2, r);
           return $oauth2Server.oauth2.logout();
         })
         .then((r) => {
-          console.log(x, "logout()", 3, r);
-          return this.$dialog.alert(after);
-        })
-        .catch((r) => {
-          console.log(x, "logout()", 4, r);
+          console.log(x, "logout()", 2, r);
           return this.$dialog.alert(after);
         })
         .then((r) => {
+          console.log(x, "logout()", 3, r);
           this.$router.push("/");
-        });
+        })
+        .catch((r) => {
+            console.log(x, "logout()", 4, r);
+            this.$router.push("/");
+        })
+        ;
     },
   },
 
   mounted() {
 
-    $restServer.oauth2
+    $exampleServer.oauth2
       .userinfo("ROLE_ADMIN")
       .then((r) => {
         console.log(x, "mounted()", 1, r);
-        $contentsState.computed.userinfo.set(r);
+        $common.computed.userinfo.set(r);
         this.username = r.username;
-        this.isAdmin = true;
+        this.isAdmin = r["ROLE_ADMIN"];
       })
       .catch((r) => {
-        console.log(x, "mounted()", 222, r);
-        if(r.username == undefined) {
-          this.$router.push(`/`);
-        }else{
-          $contentsState.computed.userinfo.set(r);
-          this.username = r.username;
-          this.isAdmin = false;
-        }
+
+          return $oauth2Server.oauth2.available(r)
+            .then((r) => {
+              if(true == r) {
+                console.log(x, "mounted()", 2, r);
+                this.username = r.username;
+                this.isAdmin = false;
+
+              }else if(false == r) {
+                console.log(x, "mounted()", 3, r);
+                this.$dialog.alert("관리자 기능 비활성화");         
+
+              }else{
+                console.log(x, "mounted()", 4, r);
+                this.username = "Anonymous";
+                this.isAdmin = true;
+              }
+            })
+
       });
+
+
   },
 };
 </script>

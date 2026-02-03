@@ -18,6 +18,7 @@ import backend.domain.properties.AttributesSet;
 import backend.domain.properties.CryptoConverter;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.Convert;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embeddable;
@@ -31,6 +32,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
+import jakarta.persistence.ForeignKey;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -67,7 +69,9 @@ public class Item extends AuditedEntity{
     // ManyToOne 
     // {foo : "http://....."} or {foo : {id : "", name: "", _links : {}}}"
     ////////////////////////////////////////////
-    @ManyToOne @RestResource(exported = false)
+    @ManyToOne 
+    @JoinColumn(foreignKey=@ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    @RestResource(exported = false)
 	@JsonProperty(access = Access.READ_ONLY)
 	private Foo foo;
 	
@@ -79,7 +83,8 @@ public class Item extends AuditedEntity{
     // ManyToMany 
     // {bar : "http://....."} or {bar : {id : "", name: "", _links : {}}}"
     ////////////////////////////////////////////
-	@ManyToMany(fetch=FetchType.EAGER) @JoinTable
+	@ManyToMany(fetch=FetchType.EAGER) 
+    @JoinTable(foreignKey=@ForeignKey(ConstraintMode.NO_CONSTRAINT), inverseForeignKey=@ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	@RestResource(exported = false)
     private Set<Bar> bars = new HashSet<>();
 
@@ -93,7 +98,7 @@ public class Item extends AuditedEntity{
     // {childs : [{name : ...}, {name : ...}, ]}
     ////////////////////////////////////////////
     @ElementCollection
-	@CollectionTable(name="examples_items_childs", joinColumns=@JoinColumn(name="parent"))
+	@CollectionTable(foreignKey=@ForeignKey(ConstraintMode.NO_CONSTRAINT), name="examples_items_childs")
 	private Set<Child> childs = new HashSet<>();
 	
 	@Embeddable
@@ -102,10 +107,6 @@ public class Item extends AuditedEntity{
 		private String name;
 		private Integer age;	
 	}
-
-
-
-
 
 
     ////////////////////////////////////////////

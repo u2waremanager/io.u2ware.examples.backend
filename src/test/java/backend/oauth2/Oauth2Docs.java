@@ -1,4 +1,4 @@
-package backend.api.oauth2;
+package backend.oauth2;
 
 
 import java.nio.file.Files;
@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -26,9 +27,8 @@ import io.u2ware.common.oauth2.jose.JoseKeyEncryptor;
 public class Oauth2Docs extends MockMvcRestDocs {
 
     
-    protected @Autowired(required = false) JwtEncoder jwtEncoder;
-    protected @Autowired(required = false) JwtDecoder jwtDecoder;
-
+    protected @Autowired(required = false) @Lazy JwtEncoder jwtEncoder;
+    protected @Autowired(required = false) @Lazy JwtDecoder jwtDecoder;
 
     public Jwt jwt(String username, String... authorities) {
 
@@ -67,6 +67,7 @@ public class Oauth2Docs extends MockMvcRestDocs {
             });
     
         }catch(Exception e){
+            e.printStackTrace();
             return null;
         }
     }

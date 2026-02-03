@@ -28,7 +28,7 @@
 
 <script>
 const x = "[/]";
-import $restServer from "@/assets/apis/rest-server";
+import $oauth2Server from "@/assets/backend/oauth2-server";
 
 export default {
   data: () => ({}),
@@ -39,16 +39,30 @@ export default {
 
   methods: {
     start() {
-      $restServer.oauth2
+      $oauth2Server.oauth2
         .userinfo()
         .then((r) => {
           console.log(x, "start()", 1, r);
           this.$router.push(`/contents`);
         })
         .catch((r) => {
-          console.log(x, "start()", 222, r);
-          this.$router.push(`/accounts/login`);
-        });
+          return $oauth2Server.oauth2.available(r)
+            .then((r) => {
+              if(true == r) {
+                console.log(x, "start()", 2, r);
+                this.$router.push(`/accounts/login`);
+
+              }else if(false == r) {
+                console.log(x, "start()", 3, r);
+                this.$dialog.alert("관리자 기능 비활성화");         
+
+              }else{
+                console.log(x, "start()", 4, r);
+                this.$router.push(`/contents`);
+              }
+            })
+        })
+        ;
     },
   },
 

@@ -21,7 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.test.web.servlet.MockMvc;
 
-import backend.api.oauth2.Oauth2Docs;
+import backend.oauth2.Oauth2Docs;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -44,7 +44,7 @@ public class BarTests {
 	@Test 
 	void contextLoads1() throws Exception{
 
-		mvc.perform(get("/api/profile/bars")).andExpect(is2xx()).andDo(print());
+		mvc.perform(get("/api/profile/bars")).andExpect(is4xx());
 
         Jwt u = od.jose("barUser1");
 
@@ -76,7 +76,7 @@ public class BarTests {
 
 
 		// U
-		Map<String,Object> body = bd.context("f1");
+		Map<String,Object> body = bd.context("b1");
 		mvc.perform(put(uri).content(bd::resetEntity, body)).andExpect(is4xx());     // unauthorized
 		mvc.perform(put(uri).content(bd::resetEntity, body).auth(u)).andExpect(is2xx()).andDo(print()); // ok
 

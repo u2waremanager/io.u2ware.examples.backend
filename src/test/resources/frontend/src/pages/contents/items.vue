@@ -150,14 +150,15 @@
               >
               </attributes-field>
 
-
              <entity-field
                 class="ma-2"
                 v-model="editForm.fooLink"
                 density="default"
                 :rules="[$rules.requried]"
                 :items="fooItems"
+                :item-selected="editForm.foo"
                 :item-title="fooItemsTitle"
+                :item-value="fooItemsValue"
                 :loading="fooItemsLoading"
                 placeholder="Foo"
                 variant="outlined"
@@ -166,13 +167,16 @@
               >
               </entity-field>
 
+
              <entity-field
                 class="ma-2"
                 v-model="editForm.barsLinks"
                 density="default"
                 :rules="[$rules.requried]"
                 :items="barItems"
+                :item-selected="editForm.bars"
                 :item-title="barItemsTitle"
+                :item-value="barItemsValue"
                 :loading="barItemsLoading"
                 placeholder="Bars"
                 @querySelections="barItemsQuery"
@@ -181,8 +185,14 @@
                 variant="outlined"
                 hint="......."
               >
-              </entity-field>
+              </entity-field>  
 
+             <entity-collections
+                class="ma-2"
+                v-model="editForm.childs"
+                :item-headers="childItemsHeader"
+              > 
+              </entity-collections>
 
               <!-- 
               /////////////////////////////
@@ -220,8 +230,8 @@
 
 <script>
 const x = "[/contents/foos]";
-import $restServer from "@/assets/apis/rest-server.js";
-import $contentsStore from "@/assets/stores/contents.js";
+import $exampleServer from "@/assets/backend/example-server.js";
+import $common from "@/assets/stores/common";
 
 export default {
   data: () => ({
@@ -258,6 +268,7 @@ export default {
         { key: "arrayValue", title: "arrayValue", align: "end" },
         { key: "foo", title: "foo", align: "end" },
         { key: "bars", title: "bars", align: "end" },
+        { key: "childs", title: "childs", align: "end" },
         { key: "updated.timestamp", title: "updatedTimestamp", align: "end" },
       ],
       sortBy: [{ key: "updated.timestamp", order: "desc" }],
@@ -274,12 +285,20 @@ export default {
     },
 
     fooItems : [],
-    fooItemsTitle : "id",
+    fooItemsValue : "id",
+    fooItemsTitle : "name",
     fooItemsLoading : false,
 
     barItems : [],
+    barItemsValue : "id",
     barItemsTitle : "_links.self.href",
-    barItemsLoading : false
+    barItemsLoading : false,
+
+    childItemsHeader : [
+      { key: "name", title: "name", align: "start", width:"40%" },
+      { key: "age", title: "age", align: "start", width:"40%" },
+    ],
+
 
   }),
 
@@ -293,7 +312,7 @@ export default {
   },
 
   computed: {
-    subtitle: $contentsStore.computed.subtitle,
+    subtitle: $common.computed.subtitle,
   },
 
 
@@ -306,7 +325,7 @@ export default {
       console.log(x, "fooItemsQuery", 1, v);
       this.fooItemsLoading = true;
       
-      $restServer.foos.search({}, {})
+      $exampleServer.foos.search({}, {})
       .then(r=>{
         console.log(x, "fooItemsQuery", 2, r);
         this.fooItems = r._embedded.foos;
@@ -321,7 +340,7 @@ export default {
       console.log(x, "barItemsQuery", 1, v);
       this.barItemsLoading = true;
       
-      $restServer.bars.search({}, {})
+      $exampleServer.bars.search({}, {})
       .then(r=>{
         console.log(x, "barItemsQuery", 2, r);
         this.barItems = r._embedded.bars;
@@ -336,19 +355,19 @@ export default {
     // handle....
     ////////////////////////////////////////
     handleCreate(){
-      return $restServer.items.create(this.editForm);
+      return $exampleServer.items.create(this.editForm);
     },
     handleRead(entity){
-      return $restServer.items.read(entity);
+      return $exampleServer.items.read(entity);
     },
     handleUpdate(){
-      return $restServer.items.update(this.editForm);
+      return $exampleServer.items.update(this.editForm);
     },
     handleDelete(){
-      return $restServer.items.delete(this.editForm);
+      return $exampleServer.items.delete(this.editForm);
     },
     handleSearch(query){
-      return $restServer.items.search(this.searchForm, query);
+      return $exampleServer.items.search(this.searchForm, query);
     },
     handleEntities(res){
       this.entitiesTotal = res.page.totalElements;

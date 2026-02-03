@@ -34,9 +34,10 @@ declare module 'vue-router/auto-routes' {
     '/contents/sessions': RouteRecordInfo<'/contents/sessions', '/contents/sessions', Record<never, never>, Record<never, never>>,
     '/contents/tokens': RouteRecordInfo<'/contents/tokens', '/contents/tokens', Record<never, never>, Record<never, never>>,
     '/contents/users': RouteRecordInfo<'/contents/users', '/contents/users', Record<never, never>, Record<never, never>>,
-    '/examples': RouteRecordInfo<'/examples', '/examples', Record<never, never>, Record<never, never>, '/examples/' | '/examples/plugins' | '/examples/plugins/dialog' | '/examples/plugins/locales' | '/examples/plugins/moment' | '/examples/plugins/storeGet' | '/examples/plugins/storeSet' | '/examples/wireframes' | '/examples/wireframes/baseline' | '/examples/wireframes/constrained' | '/examples/wireframes/discord' | '/examples/wireframes/extended-toolbar' | '/examples/wireframes/inbox' | '/examples/wireframes/side-navigation' | '/examples/wireframes/steam' | '/examples/wireframes/system-bar' | '/examples/wireframes/three-column'>,
+    '/examples': RouteRecordInfo<'/examples', '/examples', Record<never, never>, Record<never, never>, '/examples/' | '/examples/plugins' | '/examples/plugins/autocomplate' | '/examples/plugins/dialog' | '/examples/plugins/locales' | '/examples/plugins/moment' | '/examples/plugins/storeGet' | '/examples/plugins/storeSet' | '/examples/wireframes' | '/examples/wireframes/baseline' | '/examples/wireframes/constrained' | '/examples/wireframes/discord' | '/examples/wireframes/extended-toolbar' | '/examples/wireframes/inbox' | '/examples/wireframes/side-navigation' | '/examples/wireframes/steam' | '/examples/wireframes/system-bar' | '/examples/wireframes/three-column'>,
     '/examples/': RouteRecordInfo<'/examples/', '/examples', Record<never, never>, Record<never, never>>,
-    '/examples/plugins': RouteRecordInfo<'/examples/plugins', '/examples/plugins', Record<never, never>, Record<never, never>, '/examples/plugins/dialog' | '/examples/plugins/locales' | '/examples/plugins/moment' | '/examples/plugins/storeGet' | '/examples/plugins/storeSet'>,
+    '/examples/plugins': RouteRecordInfo<'/examples/plugins', '/examples/plugins', Record<never, never>, Record<never, never>, '/examples/plugins/autocomplate' | '/examples/plugins/dialog' | '/examples/plugins/locales' | '/examples/plugins/moment' | '/examples/plugins/storeGet' | '/examples/plugins/storeSet'>,
+    '/examples/plugins/autocomplate': RouteRecordInfo<'/examples/plugins/autocomplate', '/examples/plugins/autocomplate', Record<never, never>, Record<never, never>>,
     '/examples/plugins/dialog': RouteRecordInfo<'/examples/plugins/dialog', '/examples/plugins/dialog', Record<never, never>, Record<never, never>>,
     '/examples/plugins/locales': RouteRecordInfo<'/examples/plugins/locales', '/examples/plugins/locales', Record<never, never>, Record<never, never>>,
     '/examples/plugins/moment': RouteRecordInfo<'/examples/plugins/moment', '/examples/plugins/moment', Record<never, never>, Record<never, never>>,
@@ -130,7 +131,7 @@ declare module 'vue-router/auto-routes' {
       views: never
     }
     'src/pages/examples.vue': {
-      routes: '/examples' | '/examples/' | '/examples/wireframes/baseline' | '/examples/wireframes/constrained' | '/examples/plugins/dialog' | '/examples/wireframes/discord' | '/examples/wireframes/extended-toolbar' | '/examples/wireframes/inbox' | '/examples/plugins/locales' | '/examples/plugins/moment' | '/examples/plugins' | '/examples/wireframes/side-navigation' | '/examples/wireframes/steam' | '/examples/plugins/storeGet' | '/examples/plugins/storeSet' | '/examples/wireframes/system-bar' | '/examples/wireframes/three-column' | '/examples/wireframes'
+      routes: '/examples' | '/examples/' | '/examples/plugins/autocomplate' | '/examples/wireframes/baseline' | '/examples/wireframes/constrained' | '/examples/plugins/dialog' | '/examples/wireframes/discord' | '/examples/wireframes/extended-toolbar' | '/examples/wireframes/inbox' | '/examples/plugins/locales' | '/examples/plugins/moment' | '/examples/plugins' | '/examples/wireframes/side-navigation' | '/examples/wireframes/steam' | '/examples/plugins/storeGet' | '/examples/plugins/storeSet' | '/examples/wireframes/system-bar' | '/examples/wireframes/three-column' | '/examples/wireframes'
       views: 'default'
     }
     'src/pages/examples/index.vue': {
@@ -138,8 +139,12 @@ declare module 'vue-router/auto-routes' {
       views: never
     }
     'src/pages/examples/plugins.vue': {
-      routes: '/examples/plugins' | '/examples/plugins/dialog' | '/examples/plugins/locales' | '/examples/plugins/moment' | '/examples/plugins/storeGet' | '/examples/plugins/storeSet'
+      routes: '/examples/plugins' | '/examples/plugins/autocomplate' | '/examples/plugins/dialog' | '/examples/plugins/locales' | '/examples/plugins/moment' | '/examples/plugins/storeGet' | '/examples/plugins/storeSet'
       views: 'default'
+    }
+    'src/pages/examples/plugins/autocomplate.vue': {
+      routes: '/examples/plugins/autocomplate'
+      views: never
     }
     'src/pages/examples/plugins/dialog.vue': {
       routes: '/examples/plugins/dialog'

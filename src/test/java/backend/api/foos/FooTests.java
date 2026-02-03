@@ -20,7 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.test.web.servlet.MockMvc;
 
-import backend.api.oauth2.Oauth2Docs;
+import backend.oauth2.Oauth2Docs;
 
 
 @SpringBootTest
@@ -43,7 +43,7 @@ public class FooTests {
 	@Test
 	void contextLoads1() throws Exception{
 		
-		mvc.perform(get("/api/profile/foos")).andExpect(is2xx()).andDo(print());
+		mvc.perform(get("/api/profile/foos")).andExpect(is4xx()).andDo(print());
 
         Jwt u = od.jose("fooUser");
 

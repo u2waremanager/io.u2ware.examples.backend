@@ -1,4 +1,4 @@
-package backend.api.users;
+package backend.api.accounts;
 
 
 import java.util.HashMap;
@@ -10,7 +10,7 @@ import io.u2ware.common.docs.MockMvcRestDocs;
 
 
 @Component
-public class UserDocs extends MockMvcRestDocs {
+public class AccountDocs extends MockMvcRestDocs {
 
 
     public Map<String,Object> newEntity(String username){

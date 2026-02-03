@@ -13,6 +13,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     AppFooter: typeof import('./src/components/AppFooter.vue')['default']
     AttributesField: typeof import('./src/components/AttributesField.vue')['default']
+    EntityCollections: typeof import('./src/components/EntityCollections.vue')['default']
     EntityField: typeof import('./src/components/EntityField.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

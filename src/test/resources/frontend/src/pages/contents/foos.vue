@@ -163,8 +163,8 @@
 
 <script>
 const x = "[/contents/foos]";
-import $restServer from "@/assets/apis/rest-server.js";
-import $contentsStore from "@/assets/stores/contents.js";
+import $exampleServer from "@/assets/backend/example-server.js";
+import $common from "@/assets/stores/common";
 
 export default {
   data: () => ({
@@ -223,7 +223,7 @@ export default {
   },
 
   computed: {
-    subtitle: $contentsStore.computed.subtitle,
+    subtitle: $common.computed.subtitle,
   },
 
   methods: {
@@ -232,19 +232,19 @@ export default {
     // handle....
     ////////////////////////////////////////
     handleCreate(){
-      return $restServer.foos.create(this.editForm);
+      return $exampleServer.foos.create(this.editForm);
     },
     handleRead(entity){
-      return $restServer.foos.read(entity);
+      return $exampleServer.foos.read(entity);
     },
     handleUpdate(){
-      return $restServer.foos.update(this.editForm);
+      return $exampleServer.foos.update(this.editForm);
     },
     handleDelete(){
-      return $restServer.foos.delete(this.editForm);
+      return $exampleServer.foos.delete(this.editForm);
     },
     handleSearch(query){
-      return $restServer.foos.search(this.searchForm, query);
+      return $exampleServer.foos.search(this.searchForm, query);
     },
     handleEntities(res){
       this.entitiesTotal = res.page.totalElements;

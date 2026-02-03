@@ -2,18 +2,13 @@ package backend;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.HashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -22,8 +17,6 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.resource.PathResourceResolver;
-
-import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @Configuration
@@ -57,8 +50,8 @@ public class ApplicationWebConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
 
-        logger.info("addResourceHandlers "+registry);
-        logger.info("frontendProperties "+frontendProperties);
+        // logger.info("addResourceHandlers "+registry);
+        // logger.info("frontendProperties "+frontendProperties);
 
         registry.addResourceHandler("/**")
                     .addResourceLocations("classpath:/META-INF/resources/")
@@ -69,7 +62,7 @@ public class ApplicationWebConfig implements WebMvcConfigurer {
                         protected Resource getResource(String resourcePath, Resource location) throws IOException {
 
 
-                            logger.info("addResourceHandlers "+resourcePath);
+                            // logger.info("addResourceHandlers "+resourcePath);
 
 
                             Resource r = location.createRelative(resourcePath);
@@ -101,14 +94,14 @@ public class ApplicationWebConfig implements WebMvcConfigurer {
     }
  
     
-    @Configuration
-    @ConfigurationProperties(prefix="vite")
-    public static class FrontendProperties extends HashMap<String,String>{}
+    // @Configuration
+    // @ConfigurationProperties(prefix="vite")
+    // public static class FrontendProperties extends HashMap<String,String>{}
 
-    private @Autowired FrontendProperties frontendProperties;
+    // private @Autowired FrontendProperties frontendProperties;
 
-    @RequestMapping(method=RequestMethod.OPTIONS, value="/env")
-    public Object env(HttpServletRequest request){
-        return frontendProperties;
-    }
+    // @RequestMapping(method=RequestMethod.OPTIONS, value="/env")
+    // public Object env(HttpServletRequest request){
+    //     return frontendProperties;
+    // }
 }

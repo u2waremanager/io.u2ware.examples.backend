@@ -20,7 +20,7 @@ public class NodeSubscriber implements WebsocketStompClientHandler{
     protected Log logger = LogFactory.getLog(getClass());
 
 
-    protected @Autowired NodeRepository sessionRepository;
+    protected @Autowired NodeRepository nodeRepository;
     protected @Autowired WebsocketStompProperties properties;
 
     @Override
@@ -44,7 +44,7 @@ public class NodeSubscriber implements WebsocketStompClientHandler{
         e.setPrincipal(principal);
         e.setTimestamp(timestamp);
         e.setState(state);
-        sessionRepository.save(e);
+        nodeRepository.save(e);
     }
 
 

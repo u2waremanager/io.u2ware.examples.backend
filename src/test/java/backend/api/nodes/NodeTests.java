@@ -1,9 +1,8 @@
-package backend.api.tokens;
+package backend.api.nodes;
 
 import static io.u2ware.common.docs.MockMvcRestDocs.is2xx;
 import static io.u2ware.common.docs.MockMvcRestDocs.is4xx;
 import static io.u2ware.common.docs.MockMvcRestDocs.post;
-import static io.u2ware.common.docs.MockMvcRestDocs.print;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -15,18 +14,18 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.test.web.servlet.MockMvc;
 
-import backend.api.oauth2.Oauth2Docs;
+import backend.oauth2.Oauth2Docs;
 
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
-public class TokenTests {
+public class NodeTests {
     
     protected Log logger = LogFactory.getLog(getClass());
 
     protected @Autowired MockMvc mvc;
-    protected @Autowired TokenDocs td;
+    protected @Autowired NodeDocs td;
     protected @Autowired Oauth2Docs od;
 
 
@@ -40,15 +39,12 @@ public class TokenTests {
 
 
 
-        mvc.perform(post("/api/tokens/search")).andExpect(is4xx());
-        mvc.perform(post("/api/tokens/search").auth(u1)).andExpect(is2xx());
-        mvc.perform(post("/api/tokens/search").auth(u2)).andExpect(is4xx());
-        mvc.perform(post("/api/tokens/search").auth(u3)).andExpect(is4xx());
+        mvc.perform(post("/api/nodes/search")).andExpect(is4xx());
+        mvc.perform(post("/api/nodes/search").auth(u1)).andExpect(is2xx());
+        mvc.perform(post("/api/nodes/search").auth(u2)).andExpect(is2xx());
+        mvc.perform(post("/api/nodes/search").auth(u3)).andExpect(is2xx());
 
 
-        logger.info("----------------------------------");
-        mvc.perform(post("/api/tokens").content(td::newEntity).auth(u1)).andExpect(is2xx()).andDo(print());
-        mvc.perform(post("/api/tokens/search").auth(u1)).andExpect(is2xx()).andDo(print());
 
     }
 }

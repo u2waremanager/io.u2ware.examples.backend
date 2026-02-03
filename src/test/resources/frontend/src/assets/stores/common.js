@@ -37,7 +37,7 @@ export default {
   /////////////////////
   // 
   /////////////////////
-  persistedstate: true,
+  persistedstate: false,
 
 
   /////////////////////
@@ -45,23 +45,24 @@ export default {
   /////////////////////
   computed: {
 
-    oauth2: {
+    subtitle : {
       get: () => {
-        return $store.getters["common/root"].oauth2;
+        return $store.getters["common/root"].subtitle;
       },
       set: (val) => {
-        $store.commit("common/root", { oauth2: val });
-      },
+        $store.commit("common/root", { subtitle: val });
+      },      
     },
 
-    token: {
+    userinfo : {
       get: () => {
-        return $store.getters["common/root"].token;
+        return $store.getters["common/root"].userinfo;
       },
       set: (val) => {
-        $store.commit("common/root", { token: val });
-      },
-    },
+        $store.commit("common/root", { userinfo: val });
+      },      
+    }
+
 
 
   },
