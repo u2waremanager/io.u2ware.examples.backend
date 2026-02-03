@@ -1,4 +1,4 @@
-package backend.api.nodes;
+package backend.api.sessions;
 
 
 
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import io.u2ware.common.docs.MockMvcRestDocs;
 
 @Component
-public class NodeDocs extends MockMvcRestDocs {
+public class SessionDocs extends MockMvcRestDocs {
     
 
     public Map<String,Object> newEntity(){

@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "examples_sessions")
 @Data
 @NoArgsConstructor @AllArgsConstructor
-public class Node {
+public class Session {
 
 
     @Id

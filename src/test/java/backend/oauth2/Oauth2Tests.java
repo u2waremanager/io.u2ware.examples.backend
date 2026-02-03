@@ -45,14 +45,14 @@ public class Oauth2Tests {
 
     public void contextLoadsWithoutOauth2() throws Exception{
         Jwt u = od.jose("user1");
-        mvc.perform(get("/api/profile")).andExpect(is2xx()).andDo(print());
-        mvc.perform(get("/api/profile").auth(u)).andExpect(is2xx()).andDo(print());
+        mvc.perform(get("/oauth2/userinfo")).andExpect(is2xx()).andDo(print());
+        mvc.perform(get("/oauth2/userinfo").auth(u)).andExpect(is2xx()).andDo(print());
     }
 
     public void contextLoadsWithOauth2() throws Exception{
         Jwt u = od.jose("user1");
-        mvc.perform(get("/api/profile")).andExpect(is4xx()).andDo(print());
-        mvc.perform(get("/api/profile").auth(u)).andExpect(is2xx()).andDo(print());
+        mvc.perform(get("/oauth2/userinfo")).andExpect(is4xx()).andDo(print());
+        mvc.perform(get("/oauth2/userinfo").auth(u)).andExpect(is2xx()).andDo(print());
     }
 
 

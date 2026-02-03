@@ -1,4 +1,4 @@
-package backend.api.nodes;
+package backend.api.sessions;
 
 import static io.u2ware.common.docs.MockMvcRestDocs.is2xx;
 import static io.u2ware.common.docs.MockMvcRestDocs.is4xx;
@@ -20,12 +20,12 @@ import backend.oauth2.Oauth2Docs;
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
-public class NodeTests {
+public class SessionTests {
     
     protected Log logger = LogFactory.getLog(getClass());
 
     protected @Autowired MockMvc mvc;
-    protected @Autowired NodeDocs td;
+    protected @Autowired SessionDocs td;
     protected @Autowired Oauth2Docs od;
 
 
