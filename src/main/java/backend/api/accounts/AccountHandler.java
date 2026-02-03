@@ -1,6 +1,8 @@
 package backend.api.accounts;
 
 
+import java.io.Serializable;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.data.jpa.domain.Specification;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Component;
 import backend.domain.Account;
 import backend.domain.auditing.AuditedAuditor;
 import backend.domain.exception.ResponseStatusExceptions;
+import io.u2ware.common.data.jpa.repository.query.JpaSpecificationBuilder;
 import io.u2ware.common.data.rest.core.annotation.HandleAfterRead;
 import io.u2ware.common.data.rest.core.annotation.HandleBeforeRead;
 
@@ -46,7 +49,7 @@ public class AccountHandler {
     }
 
     @HandleAfterRead
-    public void HandleAfterRead(Account e)throws Exception{
+    public void HandleAfterRead(Account e, Serializable s)throws Exception{
         logger.info("@HandleAfterRead : "+e);
 
         // if(! AuditedAuditor.isOwner(e.getInserted()) && AuditedAuditor.hasNotPermission(e.getInserted(), "ROLE_ADMIN")) {
@@ -58,11 +61,17 @@ public class AccountHandler {
     }
 
     @HandleBeforeRead
-    public void HandleBeforeRead(Account e, Specification<Account> r)throws Exception{
+    public void HandleBeforeRead(Account e, Specification<Account> s)throws Exception{
         logger.info("@HandleBeforeRead : "+e);
         if(AuditedAuditor.hasNotPermission("ROLE_ADMIN")) {
             throw ResponseStatusExceptions.UNAUTHORIZED;
         }
+
+        JpaSpecificationBuilder.of(Account.class)
+            .where()
+                .and().containing("username", e.getUsername())
+        .build(s);
+
     }
 
 }

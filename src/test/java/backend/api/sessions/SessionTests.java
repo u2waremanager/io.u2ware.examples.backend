@@ -39,10 +39,10 @@ public class SessionTests {
 
 
 
-        mvc.perform(post("/api/nodes/search")).andExpect(is4xx());
-        mvc.perform(post("/api/nodes/search").auth(u1)).andExpect(is2xx());
-        mvc.perform(post("/api/nodes/search").auth(u2)).andExpect(is2xx());
-        mvc.perform(post("/api/nodes/search").auth(u3)).andExpect(is2xx());
+        mvc.perform(post("/api/sessions/search")).andExpect(is4xx());
+        mvc.perform(post("/api/sessions/search").auth(u1)).andExpect(is2xx());
+        mvc.perform(post("/api/sessions/search").auth(u2)).andExpect(is2xx());
+        mvc.perform(post("/api/sessions/search").auth(u3)).andExpect(is2xx());
 
 
 

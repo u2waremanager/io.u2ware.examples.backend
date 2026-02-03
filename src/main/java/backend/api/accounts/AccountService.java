@@ -47,12 +47,12 @@ public class AccountService implements UserAuthoritiesConverter{
             logger.info("authorities By jwt:    "+accountId);
 
             AttributesSet roles = accountRepository.count() > 0 
-                ? new AttributesSet() 
+                ? new AttributesSet(Arrays.asList("ROLE_USER")) 
                 : new AttributesSet(Arrays.asList("ROLE_ADMIN"));
 
             Account a = new Account();
             a.setId(accountId);
-            a.setName(jwt.getClaimAsString("name"));
+            a.setUsername(jwt.getClaimAsString("name"));
             a.setProvider(jwt.getClaimAsString("provider"));            
             a.setRoles(roles);
             //For Auditing...

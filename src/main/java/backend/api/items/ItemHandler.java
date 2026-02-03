@@ -1,5 +1,7 @@
 package backend.api.items;
 
+import java.io.Serializable;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import backend.domain.Foo;
 import backend.domain.Item;
 import backend.domain.properties.LinkConversion;
 import io.u2ware.common.data.rest.core.annotation.HandleBeforeRead;
+import io.u2ware.common.data.rest.core.annotation.HandleAfterRead;
 
 @Component
 @RepositoryEventHandler
@@ -56,16 +59,16 @@ public class ItemHandler {
 
 
 
-    // @HandleAfterRead
-    // public void HandleAfterRead(Item e, Serializable r)throws Exception{
-    //     logger.info("@HandleAfterRead : "+e);
-    //     logger.info("@HandleAfterRead : "+r);
-    // }
+    @HandleAfterRead
+    public void HandleAfterRead(Item e, Serializable s)throws Exception{
+        logger.info("@HandleAfterRead : "+e);
+        logger.info("@HandleAfterRead : "+s);
+    }
 
 
     @HandleBeforeRead
-    public void HandleBeforeRead(Item e, Specification<Item> r)throws Exception{
+    public void HandleBeforeRead(Item e, Specification<Item> s)throws Exception{
         logger.info("@HandleBeforeRead : "+e);
-        logger.info("@HandleBeforeRead : "+r);
+        logger.info("@HandleBeforeRead : "+s);
     }
 }

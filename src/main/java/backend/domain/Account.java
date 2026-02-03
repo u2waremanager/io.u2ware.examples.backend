@@ -29,7 +29,7 @@ public class Account extends AuditedEntity{
 
    private String provider;
 
-   private String name;
+   private String username;
 
    private AttributesSet roles;
 
