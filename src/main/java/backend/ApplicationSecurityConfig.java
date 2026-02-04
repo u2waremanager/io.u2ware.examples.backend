@@ -63,7 +63,7 @@ public class ApplicationSecurityConfig {
                         authorize.requestMatchers("/api/**").permitAll()
                         ;
                     }
-                    authorize.requestMatchers("/oauth2/userinfo").authenticated(); //UserinfoEndpoint
+                    authorize.requestMatchers("/oauth2/userinfo").permitAll(); //UserinfoEndpoint
                     authorize.anyRequest().permitAll();
             })
             .oauth2ResourceServer(oauth2 -> oauth2
