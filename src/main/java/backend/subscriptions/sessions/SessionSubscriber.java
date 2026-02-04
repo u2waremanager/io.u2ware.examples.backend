@@ -25,7 +25,7 @@ public class SessionSubscriber implements WebsocketStompClientHandler{
 
     @Override
     public String getDestination() {
-        String destination = properties.getSubscriptions().get("nodes");
+        String destination = properties.getSubscriptions().get("sessions");
         return destination;
     }
 
