@@ -64,9 +64,6 @@ services:
       spring.security.user.name: oauth2-server
       spring.security.user.password: oauth2-server
 
-      spring.security.oauth2.client.registration.google.client-id: 377591841454-d71cs25nrg3s1uinmueuajdrvmmqs46a.apps.googleusercontent.com
-      spring.security.oauth2.client.registration.google.client-secret: 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
-
       spring.jpa.hibernate.ddl-auto: update
       spring.jpa.properties.hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
       
