@@ -31,7 +31,7 @@ public class AuditedAuditor implements AuditorAware<Audited> {
 
     public static String getCurrentUsername(){
         try{
-            return AuthenticationContext.authenticationToken().getSubject();
+            return AuthenticationContext.authentication().getName();
         }catch(Exception e){
             return null;
         }

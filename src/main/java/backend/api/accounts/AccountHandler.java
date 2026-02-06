@@ -52,9 +52,6 @@ public class AccountHandler {
     public void HandleAfterRead(Account e, Serializable s)throws Exception{
         logger.info("@HandleAfterRead : "+e);
 
-        // if(! AuditedAuditor.isOwner(e.getInserted()) && AuditedAuditor.hasNotPermission(e.getInserted(), "ROLE_ADMIN")) {
-        //     throw ResponseStatusExceptions.UNAUTHORIZED;
-        // }
         if(AuditedAuditor.hasNotPermission("ROLE_ADMIN")) {
             throw ResponseStatusExceptions.UNAUTHORIZED;
         }

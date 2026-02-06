@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 import backend.domain.Account;
 import backend.domain.properties.AttributesSet;
-import backend.domain.security.AuthenticationContext;
+import io.u2ware.common.oauth2.jwt.SimpleJwtGrantedAuthoritiesConverter;
 import io.u2ware.common.oauth2.jwt.UserAuthoritiesConverter;
 
 @Component
@@ -29,7 +29,7 @@ public class AccountService implements UserAuthoritiesConverter{
     @Override
     public Collection<GrantedAuthority> convert(Jwt jwt) {
 
-        Collection<GrantedAuthority> authorities = AuthenticationContext.authorities(jwt);
+        Collection<GrantedAuthority> authorities = SimpleJwtGrantedAuthoritiesConverter.authorities(jwt);
         logger.info("authorities By jwt:    "+authorities);
 
         /////////////////////////////////////////

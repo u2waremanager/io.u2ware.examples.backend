@@ -1,19 +1,13 @@
 package backend.domain.security;
 
-import java.security.Principal;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashSet;
 
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
-import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -23,78 +17,34 @@ import jakarta.servlet.http.HttpServletRequest;
 
 public class AuthenticationContext {
 
-
-    private static JwtGrantedAuthoritiesConverter converter;
-    private static JwtGrantedAuthoritiesConverter authoritiesConverter() {
-        if(converter == null) {
-            converter = new JwtGrantedAuthoritiesConverter();
-            converter.setAuthoritiesClaimName("authorities");
-            converter.setAuthorityPrefix("");
-        } 
-        return converter;
-    }
-
-    private AuthenticationContext(){}
-
-    public static Jwt authenticationToken(Principal authentication) {
-        if(authentication instanceof JwtAuthenticationToken jwtAuthenticationToken) {
-            return jwtAuthenticationToken.getToken();
-        } 
-        return null;
-    }
-
-
-    @SuppressWarnings("unchecked")
-    public static Collection<GrantedAuthority> authorities(Authentication authentication) {
-        if(authentication == null) return Collections.EMPTY_LIST;
-        return (Collection<GrantedAuthority>) authentication.getAuthorities();
-    }
-    @SuppressWarnings("unchecked")
-    public static Collection<GrantedAuthority> authorities(Jwt jwt) {
-        if(jwt == null) return Collections.EMPTY_LIST;
-        return authoritiesConverter().convert(jwt);
-    }
-
-
-
-
-    /////////////////////////////////////////////////////////////////////
-    /// 
-    /////////////////////////////////////////////////////////////////////
     public static HttpServletRequest httpServletRequest() {
         RequestAttributes attrs = RequestContextHolder.getRequestAttributes();
         ServletRequestAttributes request = (ServletRequestAttributes)attrs;
         return request.getRequest();
     }
 
+    public static Authentication authentication() {
+        return SecurityContextHolder.getContext().getAuthentication();
+    }
+
+
+    @SuppressWarnings("unchecked")
+    public static Collection<GrantedAuthority> authorities() {
+        if(authentication() == null) return Collections.EMPTY_LIST;
+        return (Collection<GrantedAuthority>) authentication().getAuthorities();
+    }
 
     public static Boolean isAnonymousUser(){
         try{
             // return ! "anonymousUser".equals(AuthenticationContext.authentication().getName());
-            return (AuthenticationContext.authentication() instanceof AnonymousAuthenticationToken);
+            // return authentication instanceof JwtAuthenticationToken jwtAuthenticationToken) 
+            return (authentication() instanceof AnonymousAuthenticationToken);
         }catch(Exception e){
             return false;
         }
     }    
 
-
-    public static Authentication authentication() {
-        return SecurityContextHolder.getContext().getAuthentication();
-    }
-
-    public static Jwt authenticationToken() {
-        return authenticationToken(authentication());
-    }
-
-    public static Collection<GrantedAuthority> authorities() {
-        HashSet<GrantedAuthority> authorities = new HashSet<>();
-        authorities.addAll(authorities(authentication()));
-        authorities.addAll(authorities(authenticationToken()));
-        return authorities;
-    }
-
-    public static boolean hasAuthorities(String... roles) {
-
+    public static Boolean hasAuthorities(String... roles) {
         Collection<GrantedAuthority> authorities = authorities();
         if(roles.length < 1 || authorities.size() < 1) return false;
 
@@ -109,17 +59,4 @@ public class AuthenticationContext {
         }
         return result; 
     }
-
-    public static String extractHeaderToken(HttpServletRequest request) {
-        Enumeration<String> headers = request.getHeaders("Authorization");
-        while (headers.hasMoreElements()) { // typically there is only one (most servers enforce that)
-            String value = headers.nextElement();
-            if ((value.toLowerCase().startsWith("Bearer".toLowerCase()))) {
-                String authHeaderValue = value.substring("Bearer".length()).trim();
-                return authHeaderValue;
-            }
-        }
-        return null;
-    }
-
 }
