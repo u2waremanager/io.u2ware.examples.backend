@@ -37,7 +37,7 @@ services:
   ####################################################################
   oauth2-server-database:
 
-    image: ghcr.io/ubisam-research/postgres:16.4-alpine3.20
+    image: ghcr.io/u2waremanager/io.u2ware.examples.env.postgres:16.4-alpine3.20
 
     container_name: oauth2-server-database
 
@@ -50,9 +50,11 @@ services:
       POSTGRES_PASSWORD: oauth2-server-database
       POSTGRES_DB: oauth2-server-database
 
-
+  ####################################################################
+  # oauth2-server
+  ####################################################################
   oauth2-server:
-    image: ghcr.io/ubisam-research/oauth2-server:3.4.13
+    image: ghcr.io/u2waremanager/io.u2ware.product.oauth2-server:3.4.13
 
     container_name: oauth2-server
 
@@ -73,8 +75,11 @@ services:
       spring.datasource.password: oauth2-server-database
 
 
+  ####################################################################
+  # stomp-server
+  ####################################################################
   stomp-server:
-    image: ghcr.io/ubisam-research/stomp-server:3.4.13
+    image: ghcr.io/u2waremanager/io.u2ware.product.stomp-server:3.4.13
 
     container_name: stomp-server
 
