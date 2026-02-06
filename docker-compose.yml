@@ -87,3 +87,6 @@ services:
       spring.security.oauth2.resourceserver.jwt.jwk-set-uri: http://oauth2-server:9020/oauth2/jwks
       io.u2ware.common.stomp.destination: /sessions
       
+
+
+
