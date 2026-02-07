@@ -1,5 +1,5 @@
-services:
 
+services:
   ####################################################################
   # MySQL
   ####################################################################
@@ -33,22 +33,22 @@ services:
 
 
   ####################################################################
-  # oauth2-server-database
+  # oauth2-db
   ####################################################################
-  oauth2-server-database:
+  oauth2-db:
 
     image: ghcr.io/u2waremanager/io.u2ware.examples.env.postgres:16.4-alpine3.20
 
-    container_name: oauth2-server-database
+    container_name: oauth2-db
 
     ports:
       - "5432:5432"
 
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
-      POSTGRES_USER: oauth2-server-database
-      POSTGRES_PASSWORD: oauth2-server-database
-      POSTGRES_DB: oauth2-server-database
+      POSTGRES_USER: oauth2-db
+      POSTGRES_PASSWORD: oauth2-db
+      POSTGRES_DB: oauth2-db
 
   ####################################################################
   # oauth2-server
@@ -70,9 +70,42 @@ services:
       spring.jpa.properties.hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
       
       spring.datasource.driver-class-name: org.postgresql.Driver
-      spring.datasource.url: jdbc:postgresql://oauth2-server-database:5432/oauth2-server-database
-      spring.datasource.username: oauth2-server-database
-      spring.datasource.password: oauth2-server-database
+      spring.datasource.url: jdbc:postgresql://oauth2-db:5432/oauth2-db
+      spring.datasource.username: oauth2-db
+      spring.datasource.password: oauth2-db
+
+    depends_on:
+      oauth2-db :
+        condition: service_started
+
+
+  ####################################################################
+  # stomp-mq
+  ####################################################################
+  stomp-mq:
+    image: ghcr.io/u2waremanager/io.u2ware.examples.env.rabbitmq:3-management
+    # image: rabbitmq:4.0-management-alpine
+
+    container_name: stomp-mq
+
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+      - "61613:61613"
+
+    environment:
+      RABBITMQ_DEFAULT_USER: stomp-mq
+      RABBITMQ_DEFAULT_PASS: stomp-mq
+
+    # healthcheck:
+    #   test: ["CMD", " rabbitmq-plugins", "enable", "--offline", "rabbitmq_stomp"]
+    #   test: ["CMD", "rabbitmq-diagnostics", "-q", "check_running"]
+    #   test: ["CMD", "rabbitmq-diagnostics", "-q", "check_running", "&&", "rabbitmq-diagnostics", "-q", "check_local_alarms"]
+    #   test: ["CMD", "nc", "-z", "localhost", "61613"]
+    #   interval: 10s
+    #   timeout: 5s
+    #   retries: 5
+    #   start_period: 30s
 
 
   ####################################################################
@@ -89,9 +122,16 @@ services:
     environment:
       server.port: 9030
       spring.security.oauth2.resourceserver.jwt.issuer-uri: http://localhost:9020
-      spring.security.oauth2.resourceserver.jwt.jwk-set-uri: http://oauth2-server:9020/oauth2/jwks
+      spring.security.oauth2.resourceserver.jwt.jwk-set-uri: http://oauth2Server:9020/oauth2/jwks
+      
       io.u2ware.common.stomp.destination: /sessions
       
+      io.u2ware.common.stomp.server.host: stomp-mq
+      io.u2ware.common.stomp.server.port: 61613
+      io.u2ware.common.stomp.server.username: stomp-mq
+      io.u2ware.common.stomp.server.password: stomp-mq
 
-
-
+    depends_on:
+      stomp-mq :
+        condition: service_started
+        # condition: service_healthy
